@@ -4,6 +4,9 @@
 import numpy as np
 import pandas as pd
 import jieba
+import os
+import sys
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
 from utility.NlpUtility import serperate_text
 from utility.WordDictUtility import Vocabulary
