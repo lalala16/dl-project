@@ -7,6 +7,7 @@ import os
 import cPickle as CPickle
 import pickle
 import numpy as np
+import csv
 
 
 class CsvUtility(object):
@@ -85,26 +86,12 @@ class CsvUtility(object):
         return re_array
 
     @staticmethod
-    def write_array_csv(raw_array, csv_path, file_name, regular=True):
-        np_raw = np.array(raw_array, dtype=str)
+    def write_array_csv_test(raw_array, csv_path, file_name):
+        np_raw = np.array(raw_array)
         if np_raw.ndim == 1:
-            np_raw = np_raw.reshape((-1, len(np_raw)))
-        if regular:
-            pd.DataFrame(np_raw).to_csv(os.path.join(csv_path, file_name), index=None, header=None)
-        elif np_raw.ndim == 2:
-            with open(os.path.join(csv_path, file_name), 'w') as f:
-                for item in np_raw:
-                    f.write('\t'.join(item) + '\n')
-                f.close()
-        elif np_raw.ndim == 3:
-            with open(os.path.join(csv_path, file_name), 'w') as f:
-                for doc_text in np_raw:
+            np_raw = np_raw.reshape(len(raw_array), -1)
+        pd.DataFrame(np_raw).to_csv(os.path.join(csv_path, file_name), index=None, header=None)
 
-                    for sentence in doc_text:
-                        f.write('\t'.join(sentence) + ' | ')
-                    f.write('\n')
-
-                f.close()
 
 if __name__ == '__main__':
 

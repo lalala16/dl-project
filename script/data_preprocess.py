@@ -6,6 +6,7 @@ import pandas as pd
 import jieba
 import os
 import sys
+import itertools
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
 from utility.NlpUtility import serperate_text
@@ -28,7 +29,7 @@ def get_small_dataset(original_path='../data/', file_name='train.tsv'):
 
 
 
-def load_corpus(all_path=['../data/small_train.tsv', '../data/evaluation_public.tsv'], train_perc=0.7):
+def load_corpus(all_path=['../data/train.tsv', '../data/evaluation_public.tsv'], have_sentence=False, train_perc=0.7):
     #data = np.array(pd.read_csv(all_path, sep='\t', header=None, index_col=None))
     # print data[:5]
     header_text_list = []
@@ -40,7 +41,7 @@ def load_corpus(all_path=['../data/small_train.tsv', '../data/evaluation_public.
             # assert len(data_line) == 4
             if len(data_line) != 4:
                 print 'innormal line:', count
-            contend = serperate_text(data_line[1] + '。' + data_line[2])
+            contend = serperate_text(data_line[1] + '。' + data_line[2], text2sentence=have_sentence)
             header_text_list.append(contend)
             if data_line[3] == 'POSITIVE':
                 y.append(1)
@@ -55,11 +56,9 @@ def load_corpus(all_path=['../data/small_train.tsv', '../data/evaluation_public.
 
     x = []
     for i, line in enumerate(header_text_list):
-        x.append(voc_words.get_feature_list(line))
-    x = np.array(x)
-    y = np.array(y)
-    CsvUtility.write_array_csv(x, '../data/', 'x_train.csv', False)
-    CsvUtility.write_array_csv(y, '../data/', 'y_train.csv', True)
+        x.append(voc_words.get_feature_list(line,have_sentence=have_sentence))
+    CsvUtility.write_array_csv_test(x, '../data/', 'x_train.csv')
+    CsvUtility.write_array_csv_test(y, '../data/', 'y_train.csv')
     '''
     train_size = int(x.shape[0] * train_perc)
     # shuffle the train set
@@ -77,22 +76,22 @@ def load_corpus(all_path=['../data/small_train.tsv', '../data/evaluation_public.
             # assert len(data_line) == 4
             if len(data_line) != 3:
                 print 'innormal line:', count
-            contend = serperate_text(data_line[1] + '。' + data_line[2])
+            contend = serperate_text(data_line[1] + '。' + data_line[2], text2sentence=have_sentence)
             header_text_list.append(contend)
 
             if count % 10000 == 0:
                 print 'line ', count
     print 'data shape: ', len(header_text_list), len(header_text_list[0])
     x = []
+
     for i, line in enumerate(header_text_list):
-        x.append(voc_words.get_feature_list(line))
-    x = np.array(x)
-    CsvUtility.write_array_csv(x, '../data/', 'x_validation.csv', False)
+        x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
+    CsvUtility.write_array_csv_test(x, '../data/', 'x_validation.csv')
 
 
 if __name__ == '__main__':
-    # load_corpus()
-    get_small_dataset(file_name='evaluation_public.tsv')
+    load_corpus(['../data/small_train.tsv', '../data/small_evaluation_public.tsv'], have_sentence=True)
+    # get_small_dataset(file_name='evaluation_public.tsv')
 
 
 

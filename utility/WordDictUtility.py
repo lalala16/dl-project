@@ -6,6 +6,7 @@
 
 import pickle
 import numpy as np
+import itertools
 from utility.NlpUtility import serperate_text
 
 
@@ -22,7 +23,9 @@ class Vocabulary(object):
         for line in text_contend:
             if len(line) > self.maxlength:
                 self.maxlength = len(line)
-            for word in np.array(line).flatten():
+            # print 'line ', list(itertools.chain.from_iterable(line))
+            for word in list(itertools.chain.from_iterable(line)):
+                # print word
                 if word not in remove_stopwords:
                     if word in wordcount:
                         wordcount[word] = wordcount[word] + 1
@@ -70,12 +73,15 @@ class Vocabulary(object):
         feature_list = []
         if not have_sentence:
             for word in new_contend:
-                feature_list.append(self.word2index[word])
+                if word in self.word2index:
+                    feature_list.append(self.word2index[word])
         else:
+            # print 'have sentence'
             for sentence in new_contend:
                 sentence_feature = []
                 for word in sentence:
-                    sentence_feature.append(self.word2index[word])
+                    if word in self.word2index:
+                        sentence_feature.append(self.word2index[word])
                 feature_list.append(sentence_feature)
         return feature_list
 
