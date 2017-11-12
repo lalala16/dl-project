@@ -1,12 +1,14 @@
+import sys
+import os
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from torch.autograd import Variable
 
 from pre_process import load_data
-import sys
-import os
-sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
+
+
 
 class LSTMClassifier(nn.Module):
 
