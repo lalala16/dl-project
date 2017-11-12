@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+#!/usr/bin/env python
 import re
 import nltk
 import nltk.data
@@ -8,7 +9,6 @@ import cPickle as CPickle
 import pickle
 import numpy as np
 import csv
-
 
 class CsvUtility(object):
 

@@ -6,9 +6,6 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.utils.data as Data
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.abspath('__file__')))
 
 def load_data(word_num_max=5000, sequence_max=100):
     x = CsvUtility.read_array_from_csv('../data/', 'x_train.csv').flatten()
