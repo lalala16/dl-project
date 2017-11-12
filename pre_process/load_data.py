@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 import numpy as np
 import pandas as pd
 from utility.CsvUtility import CsvUtility
@@ -5,9 +8,6 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.utils.data as Data
-import sys
-import os
-sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
 
 def load_data(word_num_max=5000, sequence_max=100):
