@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 from utility.CsvUtility import CsvUtility
 import torch
-import torch.nn as nn
-from torch.autograd import Variable
 import torch.utils.data as Data
 
 

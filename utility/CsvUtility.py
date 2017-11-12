@@ -1,15 +1,15 @@
 # -*- coding:utf-8 -*-
-#!/usr/bin/env python
 import re
 import nltk
 import nltk.data
 import pandas as pd
 import os
+import sys
 import cPickle as CPickle
 import pickle
 import numpy as np
 import csv
-
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 class CsvUtility(object):
 
     @staticmethod
