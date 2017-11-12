@@ -19,7 +19,8 @@ def load_data(word_num_max=5000, sequence_max=100):
             sen_list = [int(i) for i in sen.split(', ')]
             feature = [0.0] * word_num_max
             for i, item in enumerate(sen_list):
-                feature[item] += 1
+                if item < word_num_max:
+                    feature[item] += 1
             doc_data.append(feature)
         if len(doc_data) < sequence_max:
             for _ in range(sequence_max - len(doc_data)):
