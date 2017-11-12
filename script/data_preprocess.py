@@ -7,6 +7,7 @@ import jieba
 import os
 import sys
 import itertools
+sys.path.append(os.path.abspath(__file__))
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
 from utility.NlpUtility import serperate_text
@@ -29,7 +30,7 @@ def get_small_dataset(original_path='../data/', file_name='train.tsv'):
 
 
 
-def load_corpus(all_path=['../data/train.tsv', '../data/evaluation_public.tsv'], have_sentence=False, train_perc=0.7):
+def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_public.tsv'], have_sentence=False, train_perc=0.7):
     #data = np.array(pd.read_csv(all_path, sep='\t', header=None, index_col=None))
     # print data[:5]
     header_text_list = []
@@ -52,14 +53,14 @@ def load_corpus(all_path=['../data/train.tsv', '../data/evaluation_public.tsv'],
                 print 'line ', count
     print 'data shape: ', len(header_text_list), len(y)
 
-    voc_words = Vocabulary('../data/')
+    voc_words = Vocabulary(origin_path + '/data/')
     voc_words.get_vocabulary(header_text_list, remove_stopwords=[], topnum=10000, save=True)
 
     x = []
     for i, line in enumerate(header_text_list):
         x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
-    CsvUtility.write_array_csv_test(x, '../data/', 'x_train.csv')
-    CsvUtility.write_array_csv_test(y, '../data/', 'y_train.csv')
+    CsvUtility.write_array_csv_test(x, origin_path + '/data/', 'x_train.csv')
+    CsvUtility.write_array_csv_test(y, origin_path + '/data/', 'y_train.csv')
     '''
     train_size = int(x.shape[0] * train_perc)
     # shuffle the train set
@@ -93,7 +94,9 @@ def load_corpus(all_path=['../data/train.tsv', '../data/evaluation_public.tsv'],
 
 
 if __name__ == '__main__':
-    load_corpus(['../data/small_train.tsv', '../data/small_evaluation_public.tsv'], have_sentence=True)
+    # print sys.path
+    origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
+    load_corpus(origin_path, [origin_path + '/data/small_train.tsv', origin_path + '/data/small_evaluation_public.tsv'], have_sentence=True)
     # get_small_dataset(file_name='evaluation_public.tsv')
 
 

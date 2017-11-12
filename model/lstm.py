@@ -9,7 +9,6 @@ from torch.autograd import Variable
 from pre_process import load_data
 
 
-
 class LSTMClassifier(nn.Module):
 
     def __init__(self, embedding_dim, hidden_dim, vocab_size, label_size, batch_size, use_gpu):

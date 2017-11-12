@@ -7,9 +7,11 @@ from utility.CsvUtility import CsvUtility
 import torch
 import torch.utils.data as Data
 
+origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
+
 
 def load_data(word_num_max=5000, sequence_max=100):
-    x = CsvUtility.read_array_from_csv('../data/', 'x_train.csv').flatten()
+    x = CsvUtility.read_array_from_csv(origin_path + '/data/', 'x_train.csv').flatten()
     # print x[0]
     data = []
     for x_item in x:
@@ -32,7 +34,7 @@ def load_data(word_num_max=5000, sequence_max=100):
         # print doc_data
         data.append(doc_data)
     print 'shape of x: ', np.array(data).shape
-    y = np.array(pd.read_csv('../data/y_train.csv', index_col=None, header=None))
+    y = np.array(pd.read_csv(origin_path + '/data/y_train.csv', index_col=None, header=None))
     print 'shape of y: ', y.shape
     # print y
     train_data = Data.TensorDataset(data_tensor=torch.from_numpy(np.array(data)),
