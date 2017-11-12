@@ -82,7 +82,8 @@ class Vocabulary(object):
                 for word in sentence:
                     if word in self.word2index:
                         sentence_feature.append(self.word2index[word])
-                feature_list.append(sentence_feature)
+                if len(sentence_feature) != 0:
+                    feature_list.append(sentence_feature)
         return feature_list
 
 

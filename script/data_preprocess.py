@@ -43,7 +43,8 @@ def load_corpus(all_path=['../data/train.tsv', '../data/evaluation_public.tsv'],
                 print 'innormal line:', count
             contend = serperate_text(data_line[1] + '。' + data_line[2], text2sentence=have_sentence)
             header_text_list.append(contend)
-            if data_line[3] == 'POSITIVE':
+            # print data_line[3].strip()=="POSITIVE"
+            if data_line[3].strip() == 'POSITIVE':
                 y.append(1)
             else:
                 y.append(0)
@@ -52,11 +53,11 @@ def load_corpus(all_path=['../data/train.tsv', '../data/evaluation_public.tsv'],
     print 'data shape: ', len(header_text_list), len(y)
 
     voc_words = Vocabulary('../data/')
-    voc_words.get_vocabulary(header_text_list, remove_stopwords=[], topnum=-1, save=True)
+    voc_words.get_vocabulary(header_text_list, remove_stopwords=[], topnum=10000, save=True)
 
     x = []
     for i, line in enumerate(header_text_list):
-        x.append(voc_words.get_feature_list(line,have_sentence=have_sentence))
+        x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
     CsvUtility.write_array_csv_test(x, '../data/', 'x_train.csv')
     CsvUtility.write_array_csv_test(y, '../data/', 'y_train.csv')
     '''
@@ -68,6 +69,7 @@ def load_corpus(all_path=['../data/train.tsv', '../data/evaluation_public.tsv'],
     return x_train[:train_size], y_train[:train_size], x_train[train_size:], y_train[train_size:]
     '''
     # preprocess validation set
+    '''
     header_text_list = []
     with open(all_path[1], 'r') as rf:
         rls = rf.readlines()
@@ -87,6 +89,7 @@ def load_corpus(all_path=['../data/train.tsv', '../data/evaluation_public.tsv'],
     for i, line in enumerate(header_text_list):
         x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
     CsvUtility.write_array_csv_test(x, '../data/', 'x_validation.csv')
+    '''
 
 
 if __name__ == '__main__':
