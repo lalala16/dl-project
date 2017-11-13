@@ -48,7 +48,7 @@ class LSTMClassifier(nn.Module):
 if __name__ == '__main__':
 
     # Hyper Parameters
-    sequence_length = 200
+    sequence_length = 100
     input_size = 5000
     embedding_dim = 100
     hidden_size = 128
