@@ -54,7 +54,7 @@ if __name__ == '__main__':
     hidden_size = 128
     num_layers = 1
     num_classes = 2
-    batch_size = 100
+    batch_size = 10
     num_epochs = 2
     learning_rate = 0.01
     use_gpu = False
