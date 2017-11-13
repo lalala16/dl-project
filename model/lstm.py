@@ -1,12 +1,17 @@
+import torch.nn as nn
+import torch
+from torch.autograd import Variable
+from torch.utils.data import DataLoader
+import pandas as pd
+import numpy as np
+
 import sys
 import os
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
-import torch.nn as nn
-import torch.nn.functional as F
-import torch
-from torch.autograd import Variable
 
-from pre_process import load_data
+import pre_process.load_data as prep
+
+origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 
 
 class LSTMClassifier(nn.Module):
@@ -43,7 +48,7 @@ class LSTMClassifier(nn.Module):
 if __name__ == '__main__':
 
     # Hyper Parameters
-    sequence_length = 100
+    sequence_length = 200
     input_size = 5000
     embedding_dim = 100
     hidden_size = 128
@@ -54,12 +59,22 @@ if __name__ == '__main__':
     learning_rate = 0.01
     use_gpu = False
 
-    train_data = load_data.load_data(input_size, sequence_length)
+    # train_data = load_data.load_data(input_size, sequence_length)
+
+    dtrain_set = prep.DatasetProcessing(origin_path+'/data/', 'x_train.csv',
+                                        'y_train.csv', input_size, sequence_length)
+
+    train_loader = DataLoader(dtrain_set,
+                              batch_size=batch_size,
+                              shuffle=True,
+                              num_workers=4
+                              )
 
     # Data Loader (Input Pipeline)
-    train_loader = torch.utils.data.DataLoader(dataset=train_data,
-                                               batch_size=batch_size,
-                                               shuffle=True, )
+    # train_loader = torch.utils.data.DataLoader(dataset=train_data,
+    #                                            batch_size=batch_size,
+    #                                            shuffle=True, )
+
 
     # test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
     #                                           batch_size=batch_size,
@@ -85,25 +100,57 @@ if __name__ == '__main__':
             # print outputs
             # print labels.view(-1)
             loss = criterion(outputs, labels.view(-1))
-            loss.backward(retain_variables=True)
+            loss.backward(retain_graph=True)
             optimizer.step()
 
             if (i + 1) % 2 == 0:
                 print ('Epoch [%d/%d], Step [%d/%d], Loss: %.4f'
-                       % (epoch + 1, num_epochs, i + 1, len(train_data) // batch_size, loss.data[0]))
+                       % (epoch + 1, num_epochs, i + 1,  dtrain_set.__len__()// batch_size, loss.data[0]))
 
-    # Test the Model
     '''
+    # Test the Model
+    dtest_set = prep.DatasetProcessing(origin_path + '/data/', 'x_test.csv',
+                                       'y_test.csv', input_size, sequence_length)
+
+    test_loader = DataLoader(dtest_set,
+                             batch_size=batch_size,
+                             shuffle=True,
+                             num_workers=4
+                             )
     correct = 0
     total = 0
-    for images, labels in test_loader:
-        images = Variable(images.view(-1, sequence_length, input_size))
-        outputs = rnn(images)
+    for i, (instances, labels) in enumerate(test_loader):
+        instances = Variable(instances.view(sequence_length, -1, input_size)).double()
+        outputs = model(instances)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
-        correct += (predicted == labels).sum()
+        correct += (predicted == (labels.view(predicted.shape))).sum()
+        print('Test Accuracy of the model: %d %%' % (100 * correct / total))
 
-    print('Test Accuracy of the model on the 10000 test images: %d %%' % (100 * correct / total))
+    print('Test Accuracy of the model: %d %%' % (100 * correct / total))
     '''
     # Save the Model
     torch.save(model.state_dict(), 'rnn.pkl')
+
+    # Predict the Result
+    dtest_set = prep.DatasetProcessingValidation(origin_path + '/data/', 'x_validation.csv',
+                                       input_size, sequence_length)
+
+    test_loader = DataLoader(dtest_set,
+                             batch_size=batch_size,
+                             shuffle=True,
+                             num_workers=4
+                             )
+    pred_re = []
+    for i, instances in enumerate(test_loader):
+
+        instances = Variable(instances.view(sequence_length, -1, input_size)).double()
+        outputs = model(instances)
+        _, predicted = torch.max(outputs.data, 1)
+        pred_re.extend(predicted)
+    # print len(pred_re)
+    id_index = np.array(pd.read_csv(os.path.join(origin_path + '/data/', 'x_validation_id.csv'), header=None, index_col=None)).flatten()
+    # print id_index
+    with open(os.path.join(origin_path + '/data/', 'result.csv'), 'w') as f:
+        for i, re in enumerate(pred_re):
+            f.write(id_index[i]+','+str(re)+'\n')

@@ -23,9 +23,9 @@ def get_small_dataset(original_path='../data/', file_name='train.tsv'):
         lines = rf.readlines()
         small_data = []
         for i in range(100):
-            small_data.append(lines[i])
+            small_data.append(lines[100 + i])
 
-    with open(os.path.join(original_path, 'small_' + file_name), 'w') as wf:
+    with open(os.path.join(original_path, 'small_' + 'test' + file_name), 'w') as wf:
         wf.writelines(small_data)
 
 
@@ -59,8 +59,8 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
     x = []
     for i, line in enumerate(header_text_list):
         x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
-    CsvUtility.write_array_csv_test(x, origin_path + '/data/', 'x_train.csv')
-    CsvUtility.write_array_csv_test(y, origin_path + '/data/', 'y_train.csv')
+    CsvUtility.write_array_csv_test(x, origin_path + '/data/', 'x_test.csv')
+    CsvUtility.write_array_csv_test(y, origin_path + '/data/', 'y_test.csv')
     '''
     train_size = int(x.shape[0] * train_perc)
     # shuffle the train set
@@ -72,6 +72,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
     # preprocess validation set
     '''
     header_text_list = []
+    text_id_list = []
     with open(all_path[1], 'r') as rf:
         rls = rf.readlines()
         for count, rline in enumerate(rls):
@@ -81,23 +82,24 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
                 print 'innormal line:', count
             contend = serperate_text(data_line[1] + '。' + data_line[2], text2sentence=have_sentence)
             header_text_list.append(contend)
-
+            text_id_list.append(data_line[0])
             if count % 10000 == 0:
                 print 'line ', count
-    print 'data shape: ', len(header_text_list), len(header_text_list[0])
+    print 'data shape: ', len(header_text_list), len(header_text_list[0]), len(text_id_list)
     x = []
 
     for i, line in enumerate(header_text_list):
         x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
     CsvUtility.write_array_csv_test(x, '../data/', 'x_validation.csv')
+    CsvUtility.write_array_csv_test(text_id_list, '../data/', 'x_validation_id.csv')
     '''
 
 
 if __name__ == '__main__':
     # print sys.path
     origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
-    load_corpus(origin_path, [origin_path + '/data/small_train.tsv', origin_path + '/data/small_evaluation_public.tsv'], have_sentence=True)
-    # get_small_dataset(file_name='evaluation_public.tsv')
+    load_corpus(origin_path, [origin_path + '/data/small_testtrain.tsv', origin_path + '/data/small_evaluation_public.tsv'], have_sentence=True)
+    # get_small_dataset()
 
 
 
