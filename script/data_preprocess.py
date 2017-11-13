@@ -33,6 +33,7 @@ def get_small_dataset(original_path='../data/', file_name='train.tsv'):
 def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_public.tsv'], have_sentence=False, train_perc=0.7):
     #data = np.array(pd.read_csv(all_path, sep='\t', header=None, index_col=None))
     # print data[:5]
+    '''
     header_text_list = []
     y = []
     with open(all_path[0], 'r') as rf:
@@ -61,6 +62,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
         x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
     CsvUtility.write_array_csv_test(x, origin_path + '/data/', 'x_test.csv')
     CsvUtility.write_array_csv_test(y, origin_path + '/data/', 'y_test.csv')
+    '''
     '''
     train_size = int(x.shape[0] * train_perc)
     # shuffle the train set
@@ -93,12 +95,20 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
     CsvUtility.write_array_csv_test(x, '../data/', 'x_validation.csv')
     CsvUtility.write_array_csv_test(text_id_list, '../data/', 'x_validation_id.csv')
     '''
-
+    text_id_list = []
+    with open(all_path[1], 'r') as rf:
+        rls = rf.readlines()
+        for count, rline in enumerate(rls):
+            data_line = rline.split('\t')
+            text_id_list.append(data_line[0])
+            if count % 10000 == 0:
+                print 'line ', count
+    CsvUtility.write_array_csv_test(text_id_list, origin_path + '/data/', 'x_validation_id.csv')
 
 if __name__ == '__main__':
     # print sys.path
     origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
-    load_corpus(origin_path, [origin_path + '/data/small_testtrain.tsv', origin_path + '/data/small_evaluation_public.tsv'], have_sentence=True)
+    load_corpus(origin_path, [origin_path + '/data/train.tsv', origin_path + '/data/evaluation_public.tsv'], have_sentence=True)
     # get_small_dataset()
 
 

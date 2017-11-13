@@ -103,7 +103,7 @@ if __name__ == '__main__':
             loss.backward(retain_graph=True)
             optimizer.step()
 
-            if (i + 1) % 2 == 0:
+            if (i + 1) % 100 == 0:
                 print ('Epoch [%d/%d], Step [%d/%d], Loss: %.4f'
                        % (epoch + 1, num_epochs, i + 1,  dtrain_set.__len__()// batch_size, loss.data[0]))
 
@@ -146,6 +146,7 @@ if __name__ == '__main__':
 
         instances = Variable(instances.view(sequence_length, -1, input_size)).double()
         outputs = model(instances)
+        # print outputs.data
         _, predicted = torch.max(outputs.data, 1)
         pred_re.extend(predicted)
     # print len(pred_re)
