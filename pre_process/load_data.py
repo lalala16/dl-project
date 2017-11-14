@@ -5,6 +5,7 @@ import torch.utils.data as Data
 from torch.utils.data.dataset import Dataset
 import sys
 import os
+import re
 import copy
 import csv
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
@@ -60,7 +61,7 @@ class DatasetProcessingValidation(Dataset):
         x_item = self.x[index]
         doc_data = []
         x_list = x_item.split('], [')
-        x_list = [i.replace('[', '').replace(']', '') for i in x_list]
+        x_list = [re.sub("[^0-9]", "", i) for i in x_list]
         # print x_list
         for seb_i, sen in enumerate(x_list):
             sen_list = [int(i) for i in sen.split(', ')]
