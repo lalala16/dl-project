@@ -49,7 +49,7 @@ def load_data(word_num_max=5000, sequence_max=100):
     return train_data
 
 class DatasetProcessingValidation(Dataset):
-    def __init__(self, origin_path, x_train_path,word_num_max, sequence_max):
+    def __init__(self, origin_path, x_train_path, word_num_max, sequence_max):
         f = open(os.path.join(origin_path, x_train_path), 'r')
         self.x = [line for line in f]
         f.close()
@@ -61,10 +61,10 @@ class DatasetProcessingValidation(Dataset):
         x_item = self.x[index]
         doc_data = []
         x_list = x_item.split('], [')
-        x_list = [re.sub("[^0-9]", "", i) for i in x_list]
+        x_list = [i.replace('[', '').replace(']', '') for i in x_list]
         # print x_list
         for seb_i, sen in enumerate(x_list):
-            sen_list = [int(i) for i in sen.split(', ')]
+            sen_list = [int(re.sub("[^0-9]", "", i).strip()) for i in sen.split(', ')]
             feature = [0.0] * self.word_num_max
             for i, item in enumerate(sen_list):
                 if item < self.word_num_max:
@@ -99,7 +99,7 @@ class DatasetProcessing(Dataset):
         x_list = [i.replace('[', '').replace(']', '') for i in x_list]
         # print x_list
         for seb_i, sen in enumerate(x_list):
-            sen_list = [int(i) for i in sen.split(', ')]
+            sen_list = [int(re.sub("[^0-9]", "", i).strip()) for i in sen.split(', ')]
             feature = [0.0] * self.word_num_max
             for i, item in enumerate(sen_list):
                 if item < self.word_num_max:
