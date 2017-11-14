@@ -92,14 +92,12 @@ if __name__ == '__main__':
     for epoch in range(num_epochs):
         for i, (instances, labels) in enumerate(train_loader):
             instances = Variable(instances.view(sequence_length, -1, input_size)).double()
-            labels = Variable(labels)
+            labels = Variable(torch.squeeze(labels))
 
             # Forward + Backward + Optimize
             optimizer.zero_grad()
             outputs = model(instances)
-            # print outputs
-            # print labels.view(-1)
-            loss = criterion(outputs, labels.view(-1))
+            loss = criterion(outputs, labels)
             loss.backward(retain_graph=True)
             optimizer.step()
 

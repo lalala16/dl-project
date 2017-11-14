@@ -58,25 +58,16 @@ class DatasetProcessingValidation(Dataset):
         self.sequence_max = sequence_max
 
     def __getitem__(self, index):
-        x_item = self.x[index]
-        doc_data = []
-        x_list = x_item.split('], [')
-        x_list = [i.replace('[', '').replace(']', '') for i in x_list]
+        instance = torch.LongTensor(np.zeros((self.sequence_max, self.word_num_max), dtype=np.int64))
         # print x_list
-        for seb_i, sen in enumerate(x_list):
-            sen_list = [int(re.sub("[^0-9]", "", i).strip()) for i in sen.split(', ')
-                        if len(re.sub("[^0-9]", "", i).strip()) > 0]
-            feature = [0.0] * self.word_num_max
-            for i, item in enumerate(sen_list):
+        for seb_i, sen in enumerate(self.x[index].split('], [')):
+            if seb_i >= self.sequence_max:
+                break
+            for i, item in enumerate([int(re.sub("[^0-9]", "", i).strip())
+                                      for i in sen.replace('[', '').replace(']', '').split(', ')
+                                      if len(re.sub("[^0-9]", "", i).strip()) > 0]):
                 if item < self.word_num_max:
-                    feature[item] += 1
-            doc_data.append(feature)
-        if len(doc_data) < self.sequence_max:
-            for _ in range(self.sequence_max - len(doc_data)):
-                doc_data.append([0.0] * self.word_num_max)
-        else:
-            doc_data = doc_data[: self.sequence_max]
-        instance = torch.LongTensor(np.array(doc_data, dtype=np.int64))
+                    instance[seb_i][item] += 1
         return instance
 
     def __len__(self):
@@ -94,19 +85,16 @@ class DatasetProcessing(Dataset):
         self.sequence_max = sequence_max
 
     def __getitem__(self, index):
-        doc_data = np.zeros((self.sequence_max, self.word_num_max), dtype=np.int64)
-        x_list = self.x[index].split('], [')
-        x_list = [i.replace('[', '').replace(']', '') for i in x_list]
+        instance = torch.LongTensor(np.zeros((self.sequence_max, self.word_num_max), dtype=np.int64))
         # print x_list
-        for seb_i, sen in enumerate(x_list):
+        for seb_i, sen in enumerate(self.x[index].split('], [')):
             if seb_i >= self.sequence_max:
                 break
-            sen_list = [int(re.sub("[^0-9]", "", i).strip()) for i in sen.split(', ')
-                        if len(re.sub("[^0-9]", "", i).strip()) > 0]
-            for i, item in enumerate(sen_list):
+            for i, item in enumerate([int(re.sub("[^0-9]", "", i).strip())
+                                      for i in sen.replace('[', '').replace(']', '').split(', ')
+                                      if len(re.sub("[^0-9]", "", i).strip()) > 0]):
                 if item < self.word_num_max:
-                    doc_data[seb_i][item] += 1
-        instance = torch.LongTensor(doc_data)
+                    instance[seb_i][item] += 1
         label = torch.LongTensor([self.y[index][0]])
         return instance, label
 
