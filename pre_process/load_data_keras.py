@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import sys
 import os
+import re
 
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
@@ -25,7 +26,8 @@ def load_data(word_num_max=50000, sequence_max=2048, train_perc=0.7):
         for seb_i, sen in enumerate(x_list):
             if data_index >= sequence_max:
                 break
-            sen_list = [int(i) for i in sen.split(', ')]
+            sen_list = [int(re.sub("[^0-9]", "", i).strip()) for i in sen.split(', ')
+                        if len(re.sub("[^0-9]", "", i).strip()) > 0]
             for i, item in enumerate(sen_list):
                 if data_index >= sequence_max:
                     break
