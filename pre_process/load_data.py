@@ -64,7 +64,8 @@ class DatasetProcessingValidation(Dataset):
         x_list = [i.replace('[', '').replace(']', '') for i in x_list]
         # print x_list
         for seb_i, sen in enumerate(x_list):
-            sen_list = [int(re.sub("[^0-9]", "", i).strip()) for i in sen.split(', ')]
+            sen_list = [int(re.sub("[^0-9]", "", i).strip()) for i in sen.split(', ')
+                        if len(re.sub("[^0-9]", "", i).strip()) > 0]
             feature = [0.0] * self.word_num_max
             for i, item in enumerate(sen_list):
                 if item < self.word_num_max:
@@ -99,7 +100,8 @@ class DatasetProcessing(Dataset):
         x_list = [i.replace('[', '').replace(']', '') for i in x_list]
         # print x_list
         for seb_i, sen in enumerate(x_list):
-            sen_list = [int(re.sub("[^0-9]", "", i).strip()) for i in sen.split(', ')]
+            sen_list = [int(re.sub("[^0-9]", "", i).strip()) for i in sen.split(', ')
+                        if len(re.sub("[^0-9]", "", i).strip()) > 0]
             feature = [0.0] * self.word_num_max
             for i, item in enumerate(sen_list):
                 if item < self.word_num_max:
