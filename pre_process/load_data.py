@@ -111,7 +111,7 @@ class DatasetProcessing(Dataset):
         return instance, label
 
     def __len__(self):
-        return self.x.shape[0]
+        return len(self.x)
 
 
 if __name__ == '__main__':
