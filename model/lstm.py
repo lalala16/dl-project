@@ -138,7 +138,7 @@ if __name__ == '__main__':
 
     test_loader = DataLoader(dtest_set,
                              batch_size=batch_size,
-                             shuffle=True,
+                             shuffle=False,
                              num_workers=4
                              )
     pred_re = []
