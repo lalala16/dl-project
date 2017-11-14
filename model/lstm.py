@@ -47,8 +47,8 @@ if __name__ == '__main__':
 
     # Hyper Parameters
     sequence_length = 100
-    input_size = 5000
-    embedding_dim = 256
+    input_size = 10000
+    embedding_dim = 512
     hidden_size = 128
     num_layers = 1
     num_classes = 2
@@ -148,6 +148,8 @@ if __name__ == '__main__':
         # print outputs.data
         _, predicted = torch.max(outputs.data, 1)
         pred_re.extend(predicted)
+        if (i + 1) % 100 == 0:
+            print 'predict :', i
     # print len(pred_re)
     id_index = np.array(pd.read_csv(os.path.join(origin_path + '/data/', 'x_validation_id.csv'), header=None, index_col=None)).flatten()
     # print id_index
