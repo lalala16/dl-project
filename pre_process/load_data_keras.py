@@ -1,15 +1,10 @@
 import numpy as np
 import pandas as pd
-import torch
-import torch.utils.data as Data
-from torch.utils.data.dataset import Dataset
 import sys
 import os
-import copy
-import csv
+
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
-from utility.CsvUtility import CsvUtility
 
 origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 
