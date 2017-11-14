@@ -7,12 +7,12 @@ from keras.layers import LSTM
 from keras.layers import Conv1D, MaxPooling1D
 from keras.utils.vis_utils import plot_model
 
-from data_loader import *
+from pre_process import load_data_keras
 
 # embedding
-embedding_size = 128        # word_embedding size
-maxlen = 34                 # used to pad input tweet sequence
-max_features = 61380        # vocabulary size
+embedding_size = 256       # word_embedding size
+maxlen = 2048                # used to pad input tweet sequence
+max_features = 50000       # vocabulary size
 
 # cnn
 kernel_size = 5
@@ -32,7 +32,7 @@ epochs = 2
 
 # loading training data
 print 'loading data...'
-x_train, y_train, x_test, y_test = load_corpus()
+x_train, y_train, x_test, y_test = load_data_keras.load_data(word_num_max=max_features, sequence_max=maxlen)
 
 
 # building model
