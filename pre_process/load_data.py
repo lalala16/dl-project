@@ -49,8 +49,10 @@ def load_data(word_num_max=5000, sequence_max=100):
 
 class DatasetProcessingValidation(Dataset):
     def __init__(self, origin_path, x_train_path,word_num_max, sequence_max):
-        self.x = CsvUtility.read_array_from_csv(origin_path, x_train_path).flatten()
-        print 'reading... shape of x: ', self.x.shape
+        f = open(os.path.join(origin_path, x_train_path), 'r')
+        self.x = [line for line in f]
+        f.close()
+        print 'reading... shape of x: ', len(self.x)
         self.word_num_max = word_num_max
         self.sequence_max = sequence_max
 
@@ -76,11 +78,11 @@ class DatasetProcessingValidation(Dataset):
         return instance
 
     def __len__(self):
-        return self.x.shape[0]
+        return len(self.x)
 
 class DatasetProcessing(Dataset):
     def __init__(self, origin_path, x_train_path, y_train_path, word_num_max, sequence_max):
-        f = open(os.path.join(origin_path, y_train_path), 'r')
+        f = open(os.path.join(origin_path, x_train_path), 'r')
         self.x = [line for line in f]
         f.close()
         print 'reading... shape of x: ', len(self.x)
