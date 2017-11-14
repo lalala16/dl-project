@@ -8,7 +8,7 @@ from torch.autograd import Variable
 sequence_length = 28
 input_size = 28
 hidden_size = 128
-num_layers = 2
+num_layers = 1
 num_classes = 10
 batch_size = 100
 num_epochs = 2
@@ -45,8 +45,8 @@ class RNN(nn.Module):
 
     def forward(self, x):
         # Set initial states
-        h0 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size))
-        c0 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size))
+        h0 = Variable(torch.zeros(x.size(0), self.num_layers,  self.hidden_size))
+        c0 = Variable(torch.zeros(x.size(0), self.num_layers,  self.hidden_size))
 
         # Forward propagate RNN
         out, _ = self.lstm(x, (h0, c0))
@@ -61,7 +61,9 @@ rnn = RNN(input_size, hidden_size, num_layers, num_classes)
 # Loss and Optimizer
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(rnn.parameters(), lr=learning_rate)
-
+print '**********************************'
+print [i.size() for i in rnn.parameters()]
+print '**********************************'
 # Train the Model
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):
@@ -71,8 +73,8 @@ for epoch in range(num_epochs):
         # Forward + Backward + Optimize
         optimizer.zero_grad()
         outputs = rnn(images)
-        print outputs
-        print labels
+        # print outputs
+        # print labels
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()

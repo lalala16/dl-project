@@ -25,7 +25,6 @@ class LSTMClassifier(nn.Module):
         self.word_embeddings = nn.Linear(vocab_size, embedding_dim)
         self.lstm = nn.LSTM(embedding_dim, hidden_dim)
         self.hidden2label = nn.Linear(hidden_dim, label_size)
-        self.hidden = self.init_hidden()
         self.softmax = nn.Softmax()
 
     def init_hidden(self):
@@ -38,11 +37,10 @@ class LSTMClassifier(nn.Module):
         return (h0, c0)
 
     def forward(self, sentence):
+        self.hidden = self.init_hidden()
         embeds = self.word_embeddings(sentence)
-        x = embeds.view(len(sentence), self.batch_size, -1)
-        lstm_out, self.hidden = self.lstm(x, self.hidden)
-        y = self.softmax(self.hidden2label(lstm_out[-1]))
-        return y
+        lstm_out, self.hidden = self.lstm(embeds.view(len(sentence), self.batch_size, -1), self.hidden)
+        return self.softmax(self.hidden2label(lstm_out[-1, :, :]))
 
 
 if __name__ == '__main__':
@@ -86,19 +84,22 @@ if __name__ == '__main__':
                                  batch_size=batch_size, use_gpu=use_gpu).double()
     # Loss and Optimizer
     criterion = nn.CrossEntropyLoss()
+    # print '**********************************'
+    # print [i.size() for i in model.parameters()]
+    # print '**********************************'
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     # Train the Model
     for epoch in range(num_epochs):
         for i, (instances, labels) in enumerate(train_loader):
-            instances = Variable(instances.view(sequence_length, -1, input_size)).double()
-            labels = Variable(torch.squeeze(labels))
+            instances_v = Variable(instances.view(sequence_length, -1, input_size)).double()
+            labels_v = Variable(torch.squeeze(labels))
 
             # Forward + Backward + Optimize
             optimizer.zero_grad()
-            outputs = model(instances)
-            loss = criterion(outputs, labels)
-            loss.backward(retain_graph=True)
+            outputs = model(instances_v)
+            loss = criterion(outputs, labels_v)
+            loss.backward()
             optimizer.step()
 
             if (i + 1) % 10 == 0:
