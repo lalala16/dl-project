@@ -50,7 +50,7 @@ if __name__ == '__main__':
     # Hyper Parameters
     sequence_length = 100
     input_size = 5000
-    embedding_dim = 100
+    embedding_dim = 256
     hidden_size = 128
     num_layers = 1
     num_classes = 2
@@ -100,7 +100,7 @@ if __name__ == '__main__':
             # print outputs
             # print labels.view(-1)
             loss = criterion(outputs, labels.view(-1))
-            loss.backward()
+            loss.backward(retain_graph=True)
             optimizer.step()
 
             if (i + 1) % 10 == 0:
@@ -155,4 +155,3 @@ if __name__ == '__main__':
     with open(os.path.join(origin_path + '/data/', 'result.csv'), 'w') as f:
         for i, re in enumerate(pred_re):
             f.write(id_index[i]+','+str(re)+'\n')
-
