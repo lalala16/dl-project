@@ -80,15 +80,16 @@ class DatasetProcessingValidation(Dataset):
 
 class DatasetProcessing(Dataset):
     def __init__(self, origin_path, x_train_path, y_train_path, word_num_max, sequence_max):
-        self.x = CsvUtility.read_array_from_csv(origin_path, x_train_path)
-        print 'reading... shape of x: ', self.x.shape
+        f = open(os.path.join(origin_path, y_train_path), 'r')
+        self.x = [line for line in f]
+        print 'reading... shape of x: ', len(self.x)
         self.y = np.array(pd.read_csv(os.path.join(origin_path, y_train_path), index_col=None, header=None))
         print 'reading... shape of y: ', self.y.shape
         self.word_num_max = word_num_max
         self.sequence_max = sequence_max
 
     def __getitem__(self, index):
-        x_item = self.x[index][0]
+        x_item = self.x[index]
         doc_data = []
         x_list = x_item.split('], [')
         x_list = [i.replace('[', '').replace(']', '') for i in x_list]
