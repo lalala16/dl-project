@@ -82,6 +82,7 @@ class DatasetProcessing(Dataset):
     def __init__(self, origin_path, x_train_path, y_train_path, word_num_max, sequence_max):
         f = open(os.path.join(origin_path, y_train_path), 'r')
         self.x = [line for line in f]
+        f.close()
         print 'reading... shape of x: ', len(self.x)
         self.y = np.array(pd.read_csv(os.path.join(origin_path, y_train_path), index_col=None, header=None))
         print 'reading... shape of y: ', self.y.shape
