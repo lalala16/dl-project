@@ -28,8 +28,8 @@ class LSTMClassifier(nn.Module):
 
     def init_hidden(self):
         if self.use_gpu:
-            h0 = Variable(torch.zeros(1, self.batch_size, self.hidden_dim).cuda())
-            c0 = Variable(torch.zeros(1, self.batch_size, self.hidden_dim).cuda())
+            h0 = Variable(torch.zeros(1, self.batch_size, self.hidden_dim).cuda()).double()
+            c0 = Variable(torch.zeros(1, self.batch_size, self.hidden_dim).cuda()).double()
         else:
             h0 = Variable(torch.zeros(1, self.batch_size, self.hidden_dim)).double()
             c0 = Variable(torch.zeros(1, self.batch_size, self.hidden_dim)).double()
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     num_classes = 2
     batch_size = 100
     num_epochs = 2
-    learning_rate = 0.01
+    learning_rate = 0.001
     use_gpu = True
 
     # train_data = load_data.load_data(input_size, sequence_length)
@@ -81,6 +81,14 @@ if __name__ == '__main__':
     model = LSTMClassifier(embedding_dim=embedding_dim, hidden_dim=hidden_size,
                                  vocab_size=input_size, label_size=num_classes,
                                  batch_size=batch_size, use_gpu=use_gpu).double()
+    if use_gpu:
+        if torch.cuda.device_count() > 1:
+            print("Let's use", torch.cuda.device_count(), "GPUs!")
+            # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+            model = nn.DataParallel(model)
+
+        if torch.cuda.is_available():
+            model.cuda()
     # Loss and Optimizer
     criterion = nn.CrossEntropyLoss()
     # print '**********************************'
@@ -91,11 +99,14 @@ if __name__ == '__main__':
     # Train the Model
     for epoch in range(num_epochs):
         for i, (instances, labels) in enumerate(train_loader):
-
-            instances_v = Variable(instances.view(sequence_length, -1, input_size)).double()
-            labels_v = Variable(torch.squeeze(labels))
-            print instances_v
-            print labels_v
+            if use_gpu:
+                instances_v = Variable(instances.view(sequence_length, -1, input_size).cuda()).double()
+                labels_v = Variable(torch.squeeze(labels).cuda())
+            else:
+                instances_v = Variable(instances.view(sequence_length, -1, input_size)).double()
+                labels_v = Variable(torch.squeeze(labels))
+            #print instances_v
+            #print labels_v
             # Forward + Backward + Optimize
             optimizer.zero_grad()
             outputs = model(instances_v)
@@ -120,7 +131,10 @@ if __name__ == '__main__':
     correct = 0
     total = 0
     for i, (instances, labels) in enumerate(test_loader):
-        instances = Variable(instances.view(sequence_length, -1, input_size)).double()
+        if use_gpu:
+            instances = Variable(instances.view(sequence_length, -1, input_size).cuda()).double()
+        else:
+            instances = Variable(instances.view(sequence_length, -1, input_size)).double()
         outputs = model(instances)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
