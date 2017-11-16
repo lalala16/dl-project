@@ -71,11 +71,12 @@ if __name__ == '__main__':
                                  vocab_size=input_size, label_size=num_classes,
                                  batch_size=batch_size, use_gpu=use_gpu).double()
     if use_gpu:
+        '''
         if torch.cuda.device_count() > 1:
             print("Let's use", torch.cuda.device_count(), "GPUs!")
             # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
             model = nn.DataParallel(model)
-
+        '''
         if torch.cuda.is_available():
             model.cuda()
     # Loss and Optimizer
@@ -90,7 +91,9 @@ if __name__ == '__main__':
         for i, (instances, labels) in enumerate(train_loader):
             if use_gpu:
                 instances = Variable(instances.view(sequence_length, -1, input_size).cuda()).double()
-                labels = Variable(labels.cuda())
+                print torch.squeeze(labels).shape
+                print labels.shape
+                labels = Variable(torch.squeeze(labels).cuda())
             else:
                 instances = Variable(instances.view(sequence_length, -1, input_size)).double()
                 labels = Variable(torch.squeeze(labels))
