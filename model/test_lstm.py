@@ -67,6 +67,8 @@ print '**********************************'
 # Train the Model
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):
+        # print images
+        # print labels
         images = Variable(images.view(-1, sequence_length, input_size))
         labels = Variable(labels)
 

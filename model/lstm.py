@@ -25,7 +25,6 @@ class LSTMClassifier(nn.Module):
         self.word_embeddings = nn.Linear(vocab_size, embedding_dim)
         self.lstm = nn.LSTM(embedding_dim, hidden_dim)
         self.hidden2label = nn.Linear(hidden_dim, label_size)
-        self.softmax = nn.Softmax()
 
     def init_hidden(self):
         if self.use_gpu:
@@ -40,7 +39,7 @@ class LSTMClassifier(nn.Module):
         self.hidden = self.init_hidden()
         embeds = self.word_embeddings(sentence)
         lstm_out, self.hidden = self.lstm(embeds.view(len(sentence), self.batch_size, -1), self.hidden)
-        return self.softmax(self.hidden2label(lstm_out[-1, :, :]))
+        return self.hidden2label(lstm_out[-1, :, :])
 
 
 if __name__ == '__main__':
@@ -55,7 +54,7 @@ if __name__ == '__main__':
     batch_size = 100
     num_epochs = 2
     learning_rate = 0.01
-    use_gpu = False
+    use_gpu = True
 
     # train_data = load_data.load_data(input_size, sequence_length)
 
@@ -92,9 +91,11 @@ if __name__ == '__main__':
     # Train the Model
     for epoch in range(num_epochs):
         for i, (instances, labels) in enumerate(train_loader):
+
             instances_v = Variable(instances.view(sequence_length, -1, input_size)).double()
             labels_v = Variable(torch.squeeze(labels))
-
+            print instances_v
+            print labels_v
             # Forward + Backward + Optimize
             optimizer.zero_grad()
             outputs = model(instances_v)
@@ -106,7 +107,7 @@ if __name__ == '__main__':
                 print ('Epoch [%d/%d], Step [%d/%d], Loss: %.4f'
                        % (epoch + 1, num_epochs, i + 1,  dtrain_set.__len__()// batch_size, loss.data[0]))
 
-    '''
+
     # Test the Model
     dtest_set = prep.DatasetProcessing(origin_path + '/data/', 'x_test.csv',
                                        'y_test.csv', input_size, sequence_length)
@@ -127,10 +128,10 @@ if __name__ == '__main__':
         print('Test Accuracy of the model: %d %%' % (100 * correct / total))
 
     print('Test Accuracy of the model: %d %%' % (100 * correct / total))
-    '''
+
     # Save the Model
     torch.save(model.state_dict(), 'rnn.pkl')
-
+    '''
     # Predict the Result
     dtest_set = prep.DatasetProcessingValidation(origin_path + '/data/', 'x_validation.csv',
                                        input_size, sequence_length)
@@ -156,3 +157,4 @@ if __name__ == '__main__':
     with open(os.path.join(origin_path + '/data/', 'result.csv'), 'w') as f:
         for i, re in enumerate(pred_re):
             f.write(id_index[i]+','+str(re)+'\n')
+    '''

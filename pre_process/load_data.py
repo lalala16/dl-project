@@ -96,6 +96,7 @@ class DatasetProcessing(Dataset):
                 if item < self.word_num_max:
                     instance[seb_i][item] += 1
         label = torch.LongTensor([self.y[index][0]])
+        # print label
         return instance, label
 
     def __len__(self):

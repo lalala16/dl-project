@@ -33,7 +33,10 @@ epochs = 2
 # loading training data
 print 'loading data...'
 x_train, y_train, x_test, y_test = load_data_keras.load_data(word_num_max=max_features, sequence_max=maxlen)
-
+print x_train[5]
+print y_train[5]
+print x_test[3]
+print y_test[3]
 
 # building model
 print 'building model...'
