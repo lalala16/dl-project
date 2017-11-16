@@ -89,17 +89,17 @@ if __name__ == '__main__':
     for epoch in range(num_epochs):
         for i, (instances, labels) in enumerate(train_loader):
             if use_gpu:
-                instances_v = Variable(instances.view(sequence_length, -1, input_size).cuda()).double()
-                labels_v = Variable(torch.squeeze(labels).cuda())
+                instances = Variable(instances.view(sequence_length, -1, input_size).cuda()).double()
+                labels = Variable(torch.squeeze(labels).cuda())
             else:
-                instances_v = Variable(instances.view(sequence_length, -1, input_size)).double()
-                labels_v = Variable(torch.squeeze(labels))
+                instances = Variable(instances.view(sequence_length, -1, input_size)).double()
+                labels = Variable(torch.squeeze(labels))
             #print instances_v
             #print labels_v
             # Forward + Backward + Optimize
             optimizer.zero_grad()
-            outputs = model(instances_v)
-            loss = criterion(outputs, labels_v)
+            outputs = model(instances)
+            loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
 
