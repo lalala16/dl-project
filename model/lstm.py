@@ -110,7 +110,7 @@ if __name__ == '__main__':
                 print ('Epoch [%d/%d], Step [%d/%d], Loss: %.4f'
                        % (epoch + 1, num_epochs, i + 1,  dtrain_set.__len__()// batch_size, loss.data[0]))
 
-
+    '''
     # Test the Model
     dtest_set = prep.DatasetProcessing(os.path.split(origin_path)[0] + '/data/', 'x_test.csv',
                                        'y_test.csv', input_size, sequence_length)
@@ -133,12 +133,12 @@ if __name__ == '__main__':
         print('Test Accuracy of the model: %d %%' % (100 * correct / total))
 
     print('Test Accuracy of the model: %d %%' % (100 * correct / total))
-
+    '''
     # Save the Model
     torch.save(model.state_dict(), 'rnn.pkl')
-    '''
+
     # Predict the Result
-    dtest_set = prep.DatasetProcessingValidation(origin_path + '/data/', 'x_validation.csv',
+    dtest_set = prep.DatasetProcessingValidation(os.path.split(origin_path)[0] + '/data/', 'x_validation.csv',
                                        input_size, sequence_length)
 
     test_loader = DataLoader(dtest_set,
@@ -149,7 +149,10 @@ if __name__ == '__main__':
     pred_re = []
     for i, instances in enumerate(test_loader):
 
-        instances = Variable(instances.view(sequence_length, -1, input_size)).double()
+        if use_gpu:
+            instances = Variable(instances.view(sequence_length, -1, input_size).cuda()).double()
+        else:
+            instances = Variable(instances.view(sequence_length, -1, input_size)).double()
         outputs = model(instances)
         # print outputs.data
         _, predicted = torch.max(outputs.data, 1)
@@ -162,4 +165,3 @@ if __name__ == '__main__':
     with open(os.path.join(origin_path + '/data/', 'result.csv'), 'w') as f:
         for i, re in enumerate(pred_re):
             f.write(id_index[i]+','+str(re)+'\n')
-    '''
