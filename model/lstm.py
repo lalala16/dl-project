@@ -58,24 +58,13 @@ if __name__ == '__main__':
 
     # train_data = load_data.load_data(input_size, sequence_length)
 
-    dtrain_set = prep.DatasetProcessing(origin_path+'/data/', 'x_train.csv',
+    dtrain_set = prep.DatasetProcessing(os.path.split(origin_path)[0] + '/data/', 'x_train.csv',
                                         'y_train.csv', input_size, sequence_length)
 
     train_loader = DataLoader(dtrain_set,
                               batch_size=batch_size,
                               shuffle=True,
-                              num_workers=4
-                              )
-
-    # Data Loader (Input Pipeline)
-    # train_loader = torch.utils.data.DataLoader(dataset=train_data,
-    #                                            batch_size=batch_size,
-    #                                            shuffle=True, )
-
-
-    # test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
-    #                                           batch_size=batch_size,
-    #                                           shuffle=False)
+                              num_workers=4)
 
     # create model
     model = LSTMClassifier(embedding_dim=embedding_dim, hidden_dim=hidden_size,
@@ -120,14 +109,13 @@ if __name__ == '__main__':
 
 
     # Test the Model
-    dtest_set = prep.DatasetProcessing(origin_path + '/data/', 'x_test.csv',
+    dtest_set = prep.DatasetProcessing(os.path.split(origin_path)[0] + '/data/', 'x_test.csv',
                                        'y_test.csv', input_size, sequence_length)
 
     test_loader = DataLoader(dtest_set,
                              batch_size=batch_size,
                              shuffle=True,
-                             num_workers=4
-                             )
+                             num_workers=4)
     correct = 0
     total = 0
     for i, (instances, labels) in enumerate(test_loader):

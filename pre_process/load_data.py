@@ -105,10 +105,7 @@ class DatasetProcessing(Dataset):
 
 if __name__ == '__main__':
     # tensor_d = load_data()
-    f = open('../data/x_train.csv', 'r')
-    cf = copy.deepcopy(f)
-    f.close()
-    for item in cf:
-        print item
+    origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
+    print os.path.split(origin_path)[0]
 
 pass
