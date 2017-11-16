@@ -79,7 +79,7 @@ if __name__ == '__main__':
         if torch.cuda.is_available():
             model.cuda()
     # Loss and Optimizer
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss().cuda()
     # print '**********************************'
     # print [i.size() for i in model.parameters()]
     # print '**********************************'
