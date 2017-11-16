@@ -5,6 +5,7 @@ from keras.layers import Dense, Dropout, Activation
 from keras.layers import Embedding
 from keras.layers import LSTM
 from keras.layers import Conv1D, MaxPooling1D
+from keras.utils import multi_gpu_model
 from keras.utils.vis_utils import plot_model
 
 from pre_process import load_data_keras
@@ -33,10 +34,10 @@ epochs = 2
 # loading training data
 print 'loading data...'
 x_train, y_train, x_test, y_test = load_data_keras.load_data(word_num_max=max_features, sequence_max=maxlen)
-print x_train[5]
-print y_train[5]
-print x_test[3]
-print y_test[3]
+# print x_train[5]
+# print y_train[5]
+# print x_test[3]
+# print y_test[3]
 
 # building model
 print 'building model...'
@@ -53,8 +54,9 @@ model.add(LSTM(lstm_output_size))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 
+multi_model = multi_gpu_model(model, gpus=2)
 print 'compiling model...'
-model.compile(loss='binary_crossentropy',
+multi_model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'],)
 
@@ -63,7 +65,8 @@ tensorboard_callback = keras.callbacks.TensorBoard(log_dir='logs/lstm_cnn')
 checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath='checkpoint/lstm_cnn.{epoch:02d}.hdf5', period=1)
 
 print 'training model...'
-model.fit(x_train, y_train,
+
+multi_model.fit(x_train, y_train,
           batch_size=batch_size,
           epochs=epochs,
           verbose=1,
@@ -71,4 +74,4 @@ model.fit(x_train, y_train,
           validation_data=(x_test, y_test))
 
 print 'saving model...'
-model.save('model/lstm_cnn.final')
+multi_model.save('model/lstm_cnn.final')
