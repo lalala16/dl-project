@@ -12,7 +12,7 @@ origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 
 def load_data(word_num_max=50000, sequence_max=2048, train_perc=0.7):
 
-    f = open(os.path.join(origin_path + '/data/', 'x_train.csv'), 'r')
+    f = open(os.path.join(os.path.split(origin_path)[0] + '/data/', 'x_train.csv'), 'r')
     x = [line for line in f]
     f.close()
     # print x[0]
@@ -41,7 +41,7 @@ def load_data(word_num_max=50000, sequence_max=2048, train_perc=0.7):
         data.append(doc_data)
     print 'shape of x: ', np.array(data).shape
     x = np.array(data)
-    y = np.array(pd.read_csv(origin_path + '/data/y_train.csv', index_col=None, header=None))
+    y = np.array(pd.read_csv(os.path.split(origin_path)[0] + '/data/y_train.csv', index_col=None, header=None))
     print 'shape of y: ', y.shape
     # print y
     print 'Done'
