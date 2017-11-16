@@ -90,7 +90,7 @@ if __name__ == '__main__':
         for i, (instances, labels) in enumerate(train_loader):
             if use_gpu:
                 instances = Variable(instances.view(sequence_length, -1, input_size).cuda()).double()
-                labels = Variable(torch.squeeze(labels).cuda())
+                labels = Variable(labels.cuda())
             else:
                 instances = Variable(instances.view(sequence_length, -1, input_size)).double()
                 labels = Variable(torch.squeeze(labels))
