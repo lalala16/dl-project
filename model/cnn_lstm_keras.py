@@ -103,3 +103,7 @@ else:
 
     print 'saving model...'
     model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
+
+    print 'predict data...'
+    re = model.predict(x_test, batch_size)
+    print re
