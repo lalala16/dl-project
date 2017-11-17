@@ -11,6 +11,7 @@ from keras.utils import multi_gpu_model
 from keras.utils.vis_utils import plot_model
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 from pre_process import load_data_keras
+from utility.CsvUtility import CsvUtility
 
 origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 
@@ -105,5 +106,5 @@ else:
     model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
 
     print 'predict data...'
-    re = model.predict(x_test, batch_size).ravel().tolist()
-    print re
+    re = model.predict(x_test, batch_size)
+    CsvUtility.write_array_csv_test(re, os.path.split(origin_path)[0] + '/data/', 'result.csv')
