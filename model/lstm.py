@@ -51,10 +51,10 @@ if __name__ == '__main__':
     hidden_size = 128
     num_layers = 1
     num_classes = 2
-    batch_size = 100
+    batch_size = 20
     num_epochs = 2
     learning_rate = 0.001
-    use_gpu = True
+    use_gpu = False
 
     # train_data = load_data.load_data(input_size, sequence_length)
 
@@ -80,7 +80,10 @@ if __name__ == '__main__':
         if torch.cuda.is_available():
             model.cuda()
     # Loss and Optimizer
-    criterion = nn.CrossEntropyLoss().cuda()
+    if use_gpu:
+        criterion = nn.CrossEntropyLoss().cuda()
+    else:
+        criterion = nn.CrossEntropyLoss()
     # print '**********************************'
     # print [i.size() for i in model.parameters()]
     # print '**********************************'
@@ -160,8 +163,8 @@ if __name__ == '__main__':
         if (i + 1) % 100 == 0:
             print 'predict :', i
     # print len(pred_re)
-    id_index = np.array(pd.read_csv(os.path.join(origin_path + '/data/', 'x_validation_id.csv'), header=None, index_col=None)).flatten()
+    id_index = np.array(pd.read_csv(os.path.join(os.path.split(origin_path)[0] + '/data/', 'x_validation_id.csv'), header=None, index_col=None)).flatten()
     # print id_index
-    with open(os.path.join(origin_path + '/data/', 'result.csv'), 'w') as f:
+    with open(os.path.join(os.path.split(origin_path)[0] + '/data/', 'result.csv'), 'w') as f:
         for i, re in enumerate(pred_re):
             f.write(id_index[i]+','+str(re)+'\n')

@@ -12,8 +12,8 @@ from pre_process import load_data_keras
 
 # embedding
 embedding_size = 256       # word_embedding size
-maxlen = 2048                # used to pad input tweet sequence
-max_features = 50000       # vocabulary size
+maxlen = 100                # used to pad input tweet sequence
+max_features = 20000       # vocabulary size
 
 # cnn
 kernel_size = 5
@@ -29,6 +29,9 @@ dense_size = 256            # optional, depends on performance
 # training
 batch_size = 32
 epochs = 2
+
+# gpu
+use_gpu = False
 
 
 # loading training data
@@ -54,24 +57,45 @@ model.add(LSTM(lstm_output_size))
 model.add(Dense(1))
 model.add(Activation('sigmoid'))
 
-multi_model = multi_gpu_model(model, gpus=2)
-print 'compiling model...'
-multi_model.compile(loss='binary_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'],)
+if use_gpu:
+    multi_model = multi_gpu_model(model, gpus=2)
+    print 'compiling model...'
+    multi_model.compile(loss='binary_crossentropy',
+                  optimizer='adam',
+                  metrics=['accuracy'],)
 
-# creating some callbacks
-tensorboard_callback = keras.callbacks.TensorBoard(log_dir='logs/lstm_cnn')
-checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath='checkpoint/lstm_cnn.{epoch:02d}.hdf5', period=1)
+    # creating some callbacks
+    tensorboard_callback = keras.callbacks.TensorBoard(log_dir='logs/lstm_cnn')
+    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath='checkpoint/lstm_cnn.{epoch:02d}.hdf5', period=1)
 
-print 'training model...'
+    print 'training model...'
 
-multi_model.fit(x_train, y_train,
-          batch_size=batch_size,
-          epochs=epochs,
-          verbose=1,
-          callbacks=[tensorboard_callback, checkpoint_callback],   # wait for specification
-          validation_data=(x_test, y_test))
+    multi_model.fit(x_train, y_train,
+              batch_size=batch_size,
+              epochs=epochs,
+              verbose=1,
+              callbacks=[tensorboard_callback, checkpoint_callback],   # wait for specification
+              validation_data=(x_test, y_test))
+    print 'saving model...'
+    multi_model.save('model/lstm_cnn.final')
+else:
+    print 'compiling model...'
+    model.compile(loss='binary_crossentropy',
+                        optimizer='adam',
+                        metrics=['accuracy'], )
 
-print 'saving model...'
-multi_model.save('model/lstm_cnn.final')
+    # creating some callbacks
+    tensorboard_callback = keras.callbacks.TensorBoard(log_dir='logs/lstm_cnn')
+    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath='checkpoint/lstm_cnn.{epoch:02d}.hdf5', period=1)
+
+    print 'training model...'
+
+    model.fit(x_train, y_train,
+                    batch_size=batch_size,
+                    epochs=epochs,
+                    verbose=1,
+                    callbacks=[tensorboard_callback, checkpoint_callback],  # wait for specification
+                    validation_data=(x_test, y_test))
+
+    print 'saving model...'
+    model.save('model/lstm_cnn.final')
