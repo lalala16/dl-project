@@ -34,7 +34,7 @@ dense_size = 256            # optional, depends on performance
 
 # training
 batch_size = 32
-epochs = 2
+epochs = 30
 
 # gpu
 use_gpu = False
