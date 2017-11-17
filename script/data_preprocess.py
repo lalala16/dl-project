@@ -112,7 +112,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
 if __name__ == '__main__':
     # print sys.path
     # origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
-    load_corpus(os.path.split(origin_path)[0], [os.path.split(origin_path)[0] + '/data/train.tsv', os.path.split(origin_path)[0] + '/data/evaluation_public.tsv'], have_sentence=False)
+    load_corpus(os.path.split(origin_path)[0], [os.path.split(origin_path)[0] + '/data/train.tsv', os.path.split(origin_path)[0] + '/data/evaluation_public.tsv'], have_sentence=True)
     # get_small_dataset(file_name='evaluation_public.tsv')
 
 
