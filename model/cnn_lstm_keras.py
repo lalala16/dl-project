@@ -69,8 +69,8 @@ if use_gpu:
                   metrics=['accuracy'],)
 
     # creating some callbacks
-    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=os.path.join(origin_path, 'logs/lstm_cnn'))
-    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=os.path.join(origin_path, 'checkpoint/lstm_cnn.{epoch:02d}.hdf5'), period=1)
+    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn'))
+    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.{epoch:02d}.hdf5'), period=1)
 
     print 'training model...'
 
@@ -81,7 +81,7 @@ if use_gpu:
               callbacks=[tensorboard_callback, checkpoint_callback],   # wait for specification
               validation_data=(x_test, y_test))
     print 'saving model...'
-    multi_model.save(os.path.join(origin_path, 'model/lstm_cnn.final'))
+    multi_model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
 else:
     print 'compiling model...'
     model.compile(loss='binary_crossentropy',
@@ -89,8 +89,8 @@ else:
                         metrics=['accuracy'], )
 
     # creating some callbacks
-    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=os.path.join(origin_path, 'logs/lstm_cnn'))
-    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=os.path.join(origin_path, 'checkpoint/lstm_cnn.{epoch:02d}.hdf5'), period=1)
+    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn'))
+    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.{epoch:02d}.hdf5'), period=1)
 
     print 'training model...'
 
@@ -102,4 +102,4 @@ else:
                     validation_data=(x_test, y_test))
 
     print 'saving model...'
-    model.save(os.path.join(origin_path, 'model/lstm_cnn.final'))
+    model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
