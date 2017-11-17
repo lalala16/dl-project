@@ -1,4 +1,6 @@
 import keras
+import os
+import sys
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
@@ -7,7 +9,7 @@ from keras.layers import LSTM
 from keras.layers import Conv1D, MaxPooling1D
 from keras.utils import multi_gpu_model
 from keras.utils.vis_utils import plot_model
-
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 from pre_process import load_data_keras
 
 # embedding
