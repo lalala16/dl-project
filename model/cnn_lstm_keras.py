@@ -1,6 +1,7 @@
 import keras
 import os
 import sys
+import numpy as np
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
@@ -41,7 +42,7 @@ use_gpu = False
 
 # loading training data
 print 'loading data...'
-x_train, y_train, x_test, y_test = load_data_keras.load_data(word_num_max=max_features, sequence_max=maxlen)
+x_train, y_train, x_test, x_test_id = load_data_keras.load_data(word_num_max=max_features, sequence_max=maxlen)
 # print x_train[5]
 # print y_train[5]
 # print x_test[3]
@@ -80,7 +81,7 @@ if use_gpu:
               epochs=epochs,
               verbose=1,
               callbacks=[tensorboard_callback, checkpoint_callback],   # wait for specification
-              validation_data=(x_test, y_test))
+              validation_split=0.7)
     print 'saving model...'
     multi_model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
 else:
@@ -100,11 +101,16 @@ else:
                     epochs=epochs,
                     verbose=1,
                     callbacks=[tensorboard_callback, checkpoint_callback],  # wait for specification
-                    validation_data=(x_test, y_test))
+                    validation_split=0.7)
 
     print 'saving model...'
     model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
 
     print 'predict data...'
-    re = model.predict(x_test, batch_size)
-    CsvUtility.write_array_csv_test(re, os.path.split(origin_path)[0] + '/data/', 'result.csv')
+    re = model.predict(x_test, batch_size).ravel().tolist()
+    id_index = np.array(x_test_id).flatten()
+    # print id_index
+    with open(os.path.join(os.path.split(origin_path)[0] + '/data/', 'result.csv'), 'w') as f:
+        for i, pre in enumerate(re):
+            f.write(id_index[i] + ',' + str(pre) + '\n')
+    # CsvUtility.write_array_csv_test(re, os.path.split(origin_path)[0] + '/data/', 'result.csv')
