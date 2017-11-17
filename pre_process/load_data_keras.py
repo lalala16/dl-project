@@ -22,6 +22,7 @@ def load_data(word_num_max=50000, sequence_max=2048, train_perc=0.7):
         data_index = 0
         # print 'x: ', x_item
         x_list = x_item.split('], [')
+        print len(x_list)
         x_list = [i.replace('[', '').replace(']', '') for i in x_list]
         # print 'x list: ', x_list
         # print x_list

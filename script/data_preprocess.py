@@ -46,6 +46,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
             if len(data_line) != 4:
                 print 'innormal line:', count
             contend = serperate_text(data_line[1] + '。' + data_line[2], text2sentence=have_sentence)
+            # print contend
             header_text_list.append(contend)
             # print data_line[3].strip()=="POSITIVE"
             if data_line[3].strip() == 'POSITIVE':
@@ -57,7 +58,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
     print 'data shape: ', len(header_text_list), len(y)
 
     voc_words = Vocabulary(origin_path + '/data/')
-    voc_words.get_vocabulary(header_text_list, remove_stopwords=[], topnum=10000, save=True)
+    voc_words.get_vocabulary(header_text_list, remove_stopwords=[], topnum=10000, save=True, have_sentence=have_sentence)
 
     x = []
     for i, line in enumerate(header_text_list):
@@ -111,7 +112,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
 if __name__ == '__main__':
     # print sys.path
     # origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
-    load_corpus(os.path.split(origin_path)[0], [os.path.split(origin_path)[0] + '/data/small_train.tsv', os.path.split(origin_path)[0] + '/data/small_evaluation_public.tsv'], have_sentence=True)
+    load_corpus(os.path.split(origin_path)[0], [os.path.split(origin_path)[0] + '/data/small_train.tsv', os.path.split(origin_path)[0] + '/data/small_evaluation_public.tsv'], have_sentence=False)
     # get_small_dataset(file_name='evaluation_public.tsv')
 
 

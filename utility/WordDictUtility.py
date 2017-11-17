@@ -18,13 +18,16 @@ class Vocabulary(object):
         self.maxlength = -1
         self.path = original_path
 
-    def get_vocabulary(self, text_contend=[], remove_stopwords=[], topnum=-1, save=False):
+    def get_vocabulary(self, text_contend=[], remove_stopwords=[], topnum=-1, save=False, have_sentence=True):
         wordcount = {}
         for line in text_contend:
             if len(line) > self.maxlength:
                 self.maxlength = len(line)
             # print 'line ', list(itertools.chain.from_iterable(line))
             for word in list(itertools.chain.from_iterable(line)):
+
+                if not have_sentence and (word < u'\u4e00' or word > u'\u9fa5'):
+                    continue
                 # print word
                 if word not in remove_stopwords:
                     if word in wordcount:
