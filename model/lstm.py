@@ -57,7 +57,7 @@ if __name__ == '__main__':
     num_layers = 1
     num_classes = 2
     batch_size = 20
-    num_epochs = 3
+    num_epochs = 30
     learning_rate = 0.001
     use_gpu = False
 
