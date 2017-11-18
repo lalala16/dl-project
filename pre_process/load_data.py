@@ -87,6 +87,7 @@ class DatasetProcessing(Dataset):
     def __getitem__(self, index):
         instance = torch.LongTensor(np.zeros((self.sequence_max, self.word_num_max), dtype=np.int64))
         # print x_list
+        # print '----', index
         for seb_i, sen in enumerate(self.x[index].split('], [')):
             if seb_i >= self.sequence_max:
                 break

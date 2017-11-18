@@ -25,6 +25,8 @@ class LSTMClassifier(nn.Module):
         self.word_embeddings = nn.Linear(vocab_size, embedding_dim)
         self.lstm = nn.LSTM(embedding_dim, hidden_dim)
         self.hidden2label = nn.Linear(hidden_dim, label_size)
+        self.softmax = nn.Softmax()
+        self.hidden = self.init_hidden()
 
     def init_hidden(self):
         if self.use_gpu:
@@ -36,10 +38,13 @@ class LSTMClassifier(nn.Module):
         return (h0, c0)
 
     def forward(self, sentence):
-        self.hidden = self.init_hidden()
+
         embeds = self.word_embeddings(sentence)
-        lstm_out, self.hidden = self.lstm(embeds.view(len(sentence), self.batch_size, -1), self.hidden)
-        return self.hidden2label(lstm_out[-1, :, :])
+        print embeds[0]
+        lstm_out, _ = self.lstm(embeds, self.hidden)
+        # print self.hidden[0].size(), self.hidden[1].size()
+        # print lstm_out[-1]
+        return self.softmax(self.hidden2label(lstm_out[-1]))
 
 
 if __name__ == '__main__':
@@ -47,13 +52,13 @@ if __name__ == '__main__':
     # Hyper Parameters
     sequence_length = 100
     input_size = 10000
-    embedding_dim = 512
-    hidden_size = 128
+    embedding_dim = 256
+    hidden_size = 64
     num_layers = 1
     num_classes = 2
     batch_size = 20
-    num_epochs = 2
-    learning_rate = 0.001
+    num_epochs = 20
+    learning_rate = 0.01
     use_gpu = False
 
     # train_data = load_data.load_data(input_size, sequence_length)
@@ -92,6 +97,7 @@ if __name__ == '__main__':
     # Train the Model
     for epoch in range(num_epochs):
         for i, (instances, labels) in enumerate(train_loader):
+            # print '----------------batch------'
             if use_gpu:
                 instances = Variable(instances.view(sequence_length, -1, input_size).cuda()).double()
                 # print torch.squeeze(labels).shape
@@ -105,6 +111,7 @@ if __name__ == '__main__':
             # Forward + Backward + Optimize
             optimizer.zero_grad()
             outputs = model(instances)
+            # print outputs, labels
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()

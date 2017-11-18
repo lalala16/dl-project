@@ -47,10 +47,10 @@ class RNN(nn.Module):
         # Set initial states
         h0 = Variable(torch.zeros(x.size(0), self.num_layers,  self.hidden_size))
         c0 = Variable(torch.zeros(x.size(0), self.num_layers,  self.hidden_size))
-
+        print h0.size()
         # Forward propagate RNN
         out, _ = self.lstm(x, (h0, c0))
-
+        print out.size()
         # Decode hidden state of last time step
         out = self.fc(out[:, -1, :])
         return out
@@ -75,8 +75,9 @@ for epoch in range(num_epochs):
         # Forward + Backward + Optimize
         optimizer.zero_grad()
         outputs = rnn(images)
-        # print outputs
-        # print labels
+
+        # print outputs,labels
+
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
