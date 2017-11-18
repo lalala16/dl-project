@@ -40,7 +40,7 @@ class LSTMClassifier(nn.Module):
     def forward(self, sentence):
 
         embeds = self.word_embeddings(sentence)
-        print embeds[0]
+        # print embeds[0]
         lstm_out, _ = self.lstm(embeds, self.hidden)
         # print self.hidden[0].size(), self.hidden[1].size()
         # print lstm_out[-1]
@@ -57,8 +57,8 @@ if __name__ == '__main__':
     num_layers = 1
     num_classes = 2
     batch_size = 20
-    num_epochs = 20
-    learning_rate = 0.01
+    num_epochs = 3
+    learning_rate = 0.001
     use_gpu = False
 
     # train_data = load_data.load_data(input_size, sequence_length)
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     train_loader = DataLoader(dtrain_set,
                               batch_size=batch_size,
                               shuffle=True,
-                              num_workers=4)
+                              )
 
     # create model
     model = LSTMClassifier(embedding_dim=embedding_dim, hidden_dim=hidden_size,
@@ -157,7 +157,9 @@ if __name__ == '__main__':
                              num_workers=4
                              )
     pred_re = []
-    for i, instances in enumerate(test_loader):
+    id_index = np.array(pd.read_csv(os.path.join(os.path.split(origin_path)[0] + '/data/', 'x_validation_id.csv'), header=None, index_col=None)).flatten()
+    index_re = []
+    for i, (instances, i_index) in enumerate(test_loader):
 
         if use_gpu:
             instances = Variable(instances.view(sequence_length, -1, input_size).cuda()).double()
@@ -167,10 +169,12 @@ if __name__ == '__main__':
         # print outputs.data
         _, predicted = torch.max(outputs.data, 1)
         pred_re.extend(predicted)
+        index_re.extend(i_index)
         if (i + 1) % 100 == 0:
             print 'predict :', i
-    # print len(pred_re)
-    id_index = np.array(pd.read_csv(os.path.join(os.path.split(origin_path)[0] + '/data/', 'x_validation_id.csv'), header=None, index_col=None)).flatten()
+    # print index_re
+    id_index = id_index[index_re]
+
     # print id_index
     with open(os.path.join(os.path.split(origin_path)[0] + '/data/', 'result.csv'), 'w') as f:
         for i, re in enumerate(pred_re):

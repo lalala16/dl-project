@@ -60,6 +60,7 @@ class DatasetProcessingValidation(Dataset):
     def __getitem__(self, index):
         instance = torch.LongTensor(np.zeros((self.sequence_max, self.word_num_max), dtype=np.int64))
         # print x_list
+        '''
         for seb_i, sen in enumerate(self.x[index].split('], [')):
             if seb_i >= self.sequence_max:
                 break
@@ -68,7 +69,24 @@ class DatasetProcessingValidation(Dataset):
                                       if len(re.sub("[^0-9]", "", i).strip()) > 0]):
                 if item < self.word_num_max:
                     instance[seb_i][item] += 1
-        return instance
+        '''
+        item_index = 0
+        for seb_i, sen in enumerate(self.x[index].split('], [')):
+            # print seb_i, '---->', sen
+            # if seb_i >= self.sequence_max:
+            #     break
+            if item_index >= self.sequence_max:
+                break
+            for i, item in enumerate([int(re.sub("[^0-9]", "", i).strip())
+                                      for i in sen.replace('[', '').replace(']', '').split(', ')
+                                      if len(re.sub("[^0-9]", "", i).strip()) > 0]):
+                if item_index >= self.sequence_max:
+                    break
+                if item < self.word_num_max:
+                    instance[item_index][item] += 1
+                    item_index += 1
+                    # print item, '*****'
+        return instance, index
 
     def __len__(self):
         return len(self.x)
@@ -87,15 +105,24 @@ class DatasetProcessing(Dataset):
     def __getitem__(self, index):
         instance = torch.LongTensor(np.zeros((self.sequence_max, self.word_num_max), dtype=np.int64))
         # print x_list
-        # print '----', index
+        #print '----', index
+        #print self.x[index]
+        item_index = 0
         for seb_i, sen in enumerate(self.x[index].split('], [')):
-            if seb_i >= self.sequence_max:
+            #print seb_i, '---->', sen
+            # if seb_i >= self.sequence_max:
+            #     break
+            if item_index >= self.sequence_max:
                 break
             for i, item in enumerate([int(re.sub("[^0-9]", "", i).strip())
                                       for i in sen.replace('[', '').replace(']', '').split(', ')
                                       if len(re.sub("[^0-9]", "", i).strip()) > 0]):
+                if item_index >= self.sequence_max:
+                    break
                 if item < self.word_num_max:
-                    instance[seb_i][item] += 1
+                    instance[item_index][item] += 1
+                    item_index += 1
+                    #print item, '*****'
         label = torch.LongTensor([self.y[index][0]])
         # print label
         return instance, label
@@ -107,6 +134,9 @@ class DatasetProcessing(Dataset):
 if __name__ == '__main__':
     # tensor_d = load_data()
     origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
-    print os.path.split(origin_path)[0]
+    randm = np.random.rand(4, 3)
+    print randm
+    print '......'
+    print torch.max(torch.FloatTensor(randm), 1)[1]
 
 pass
