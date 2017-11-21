@@ -4,6 +4,7 @@ import sys
 import numpy as np
 from keras.preprocessing import sequence
 from keras.models import Sequential
+from keras.models import save_model,load_model
 from keras.layers import Dense, Dropout, Activation
 from keras.layers import Embedding
 from keras.layers import LSTM
@@ -19,7 +20,7 @@ origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 # embedding
 embedding_size = 256       # word_embedding size
 maxlen = 1024                # used to pad input tweet sequence
-max_features = 10000       # vocabulary size
+max_features = 12725       # vocabulary size
 
 # cnn
 kernel_size = 5
@@ -71,8 +72,8 @@ if use_gpu:
                   metrics=['accuracy'],)
 
     # creating some callbacks
-    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn'))
-    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.{epoch:02d}.hdf5'), period=1)
+    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=os.path.join(os.path.split(origin_path)[0], 'fusai_data/lstm_cnn'))
+    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=os.path.join(os.path.split(origin_path)[0], 'fusai_data/lstm_cnn.{epoch:02d}.hdf5'), period=1)
 
     print 'training model...'
 
@@ -83,7 +84,7 @@ if use_gpu:
               callbacks=[tensorboard_callback, checkpoint_callback],   # wait for specification
               validation_split=0.7)
     print 'saving model...'
-    multi_model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
+    save_model(multi_model, os.path.join(os.path.split(origin_path)[0], 'fusai_data/lstm_cnn.final'))
 else:
     print 'compiling model...'
     model.compile(loss='binary_crossentropy',
@@ -91,8 +92,8 @@ else:
                         metrics=['accuracy'], )
 
     # creating some callbacks
-    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn'))
-    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.{epoch:02d}.hdf5'), period=1)
+    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=os.path.join(os.path.split(origin_path)[0], 'fusai_data/lstm_cnn'))
+    checkpoint_callback = keras.callbacks.ModelCheckpoint(filepath=os.path.join(os.path.split(origin_path)[0], 'fusai_data/lstm_cnn.{epoch:02d}.hdf5'), period=1)
 
     print 'training model...'
 
@@ -104,13 +105,17 @@ else:
                     validation_split=0.7)
 
     print 'saving model...'
-    model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
+    # model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
+    save_model(model, os.path.join(os.path.split(origin_path)[0], 'fusai_data/lstm_cnn.final'))
 
-    print 'predict data...'
-    re = model.predict(x_test, batch_size).ravel().tolist()
-    id_index = np.array(x_test_id).flatten()
-    # print id_index
-    with open(os.path.join(os.path.split(origin_path)[0] + '/data/', 'result.csv'), 'w') as f:
-        for i, pre in enumerate(re):
-            f.write(id_index[i] + ',' + str(pre) + '\n')
-    # CsvUtility.write_array_csv_test(re, os.path.split(origin_path)[0] + '/data/', 'result.csv')
+print 'predict data...'
+re = model.predict(x_test, batch_size).ravel().tolist()
+id_index = np.array(x_test_id).flatten()
+# print id_index
+with open(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'result.csv'), 'w') as f:
+    for i, pre in enumerate(re):
+        if pre>0.5:
+            f.write(id_index[i] + ',' + 'POSITIVE' + '\n')
+        else:
+            f.write(id_index[i] + ',' + 'NEGATIVE' + '\n')
+# CsvUtility.write_array_csv_test(re, os.path.split(origin_path)[0] + '/data/', 'result.csv')
