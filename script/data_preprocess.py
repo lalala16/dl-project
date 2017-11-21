@@ -63,9 +63,12 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
     x = []
     for i, line in enumerate(header_text_list):
         x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
-    CsvUtility.write_array_csv_test(x, origin_path + '/fusai_data/', 'x_train.csv')
-    CsvUtility.write_array_csv_test(y, origin_path + '/fusai_data/', 'y_train.csv')
-
+    if have_sentence:
+        CsvUtility.write_array_csv_test(x, origin_path + '/fusai_data/', 'x_train_sentence.csv')
+        CsvUtility.write_array_csv_test(y, origin_path + '/fusai_data/', 'y_train_sentence.csv')
+    else:
+        CsvUtility.write_array_csv_test(x, origin_path + '/fusai_data/', 'x_train.csv')
+        CsvUtility.write_array_csv_test(y, origin_path + '/fusai_data/', 'y_train.csv')
     '''
     train_size = int(x.shape[0] * train_perc)
     # shuffle the train set
@@ -95,7 +98,10 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
 
     for i, line in enumerate(header_text_list):
         x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
-    CsvUtility.write_array_csv_test(x, origin_path + '/fusai_data/', 'x_validation.csv')
+    if have_sentence:
+        CsvUtility.write_array_csv_test(x, origin_path + '/fusai_data/', 'x_validation_sentence.csv')
+    else:
+        CsvUtility.write_array_csv_test(x, origin_path + '/fusai_data/', 'x_validation.csv')
     CsvUtility.write_array_csv_test(text_id_list, origin_path + '/fusai_data/', 'x_validation_id.csv')
     '''
     text_id_list = []
@@ -112,7 +118,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
 if __name__ == '__main__':
     # print sys.path
     # origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
-    load_corpus(os.path.split(origin_path)[0], [os.path.split(origin_path)[0] + '/fusai_data/train.tsv', os.path.split(origin_path)[0] + '/fusai_data/evaluation_public.tsv'], have_sentence=True)
+    load_corpus(os.path.split(origin_path)[0], [os.path.split(origin_path)[0] + '/fusai_data/train.tsv', os.path.split(origin_path)[0] + '/fusai_data/evaluation_public.tsv'], have_sentence=False)
     # get_small_dataset(file_name='evaluation_public.tsv')
 
 
