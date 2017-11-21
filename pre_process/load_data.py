@@ -109,7 +109,7 @@ class DatasetProcessing(Dataset):
         #print self.x[index]
         item_index = 0
         for seb_i, sen in enumerate(self.x[index].split('], [')):
-            #print seb_i, '---->', sen
+            print seb_i, '---->', sen
             # if seb_i >= self.sequence_max:
             #     break
             if item_index >= self.sequence_max:

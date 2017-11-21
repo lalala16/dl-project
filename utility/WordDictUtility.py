@@ -29,6 +29,15 @@ class Vocabulary(object):
                 if not have_sentence and (word < u'\u4e00' or word > u'\u9fa5'):
                     continue
                 # print word
+                if have_sentence:
+                    is_alpha = True
+                    for ww in word:
+                        if ww < u'\u4e00' or ww > u'\u9fa5':
+                            is_alpha = False
+                            break
+                    if not is_alpha:
+                        continue
+
                 if word not in remove_stopwords:
                     if word in wordcount:
                         wordcount[word] = wordcount[word] + 1

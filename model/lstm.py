@@ -58,7 +58,7 @@ if __name__ == '__main__':
     num_classes = 2
     batch_size = 20
     num_epochs = 30
-    learning_rate = 0.001
+    learning_rate = 0.01
     use_gpu = False
 
     # train_data = load_data.load_data(input_size, sequence_length)
