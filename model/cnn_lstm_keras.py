@@ -82,7 +82,7 @@ if use_gpu:
               epochs=epochs,
               verbose=1,
               callbacks=[tensorboard_callback, checkpoint_callback],   # wait for specification
-              validation_split=0.7)
+              validation_split=0.2)
     print 'saving model...'
     save_model(multi_model, os.path.join(os.path.split(origin_path)[0], 'fusai_data/lstm_cnn.final'))
 else:
@@ -102,7 +102,7 @@ else:
                     epochs=epochs,
                     verbose=1,
                     callbacks=[tensorboard_callback, checkpoint_callback],  # wait for specification
-                    validation_split=0.7)
+                    validation_split=0.2)
 
     print 'saving model...'
     # model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))

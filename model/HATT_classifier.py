@@ -9,8 +9,6 @@ from bs4 import BeautifulSoup
 import sys
 import os
 
-os.environ['KERAS_BACKEND'] = 'theano'
-
 from keras.preprocessing.text import Tokenizer, text_to_word_sequence
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils.np_utils import to_categorical
@@ -22,10 +20,10 @@ from keras.models import Model
 
 from keras import backend as K
 from keras.engine.topology import Layer, InputSpec
-from keras import initializations
+from keras import initializers
 
 MAX_SENT_LENGTH = 100
-MAX_SENTS = 15
+MAX_SENTS = 50
 MAX_NB_WORDS = 20000
 EMBEDDING_DIM = 100
 VALIDATION_SPLIT = 0.2
