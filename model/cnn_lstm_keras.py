@@ -20,7 +20,7 @@ origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 # embedding
 embedding_size = 128       # word_embedding size
 maxlen = 800                # used to pad input tweet sequence
-max_features = 12725       # vocabulary size
+max_features = 7000      # vocabulary size
 
 # cnn
 kernel_size = 5
