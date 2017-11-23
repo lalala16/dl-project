@@ -29,17 +29,6 @@ EMBEDDING_DIM = 100
 VALIDATION_SPLIT = 0.2
 
 
-def clean_str(string):
-    """
-    Tokenization/string cleaning for dataset
-    Every dataset is lower cased except
-    """
-    string = re.sub(r"\\", "", string)
-    string = re.sub(r"\'", "", string)
-    string = re.sub(r"\"", "", string)
-    return string.strip().lower()
-
-
 data_train = pd.read_csv('~/Testground/data/imdb/labeledTrainData.tsv', sep='\t')
 print data_train.shape
 
@@ -157,7 +146,7 @@ embedding_layer = Embedding(len(word_index) + 1,
 
 class AttLayer(Layer):
     def __init__(self, **kwargs):
-        self.init = initializations.get('normal')
+        self.init = initializers.get('normal')
         # self.input_spec = [InputSpec(ndim=3)]
         super(AttLayer, self).__init__(**kwargs)
 

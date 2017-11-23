@@ -6,6 +6,7 @@ import re
 
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
+from utility.CsvUtility import CsvUtility
 
 origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 
@@ -87,9 +88,18 @@ def load_data(word_num_max=12725, sequence_max=2048, train_perc=0.7):
     # print y
     print 'Done'
     # shuffle the train set
-
+    CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_xtrain.pkl', x_train, 'w')
+    CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_ytrain.pkl', y_train, 'w')
+    CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_x.pkl', x, 'w')
+    CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_y.pkl', y, 'w')
     return x_train, y_train, x, y
 
+def reload_data():
+    x_train = CsvUtility.read_pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_xtrain.pkl', 'r')
+    y_train = CsvUtility.read_pickle()
+    x = CsvUtility.read_pickle()
+    y = CsvUtility.read_pickle()
+    return x_train, y_train, x, y
 if __name__ == '__main__':
     print 'loading data...'
     x_train, y_train, x_test, x_id = load_data()
