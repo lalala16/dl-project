@@ -34,11 +34,11 @@ lstm_output_size = 70
 dense_size = 256            # optional, depends on performance
 
 # training
-batch_size = 32
+batch_size = 64
 epochs = 50
 
 # gpu
-use_gpu = True
+use_gpu = False
 
 
 # loading training data
