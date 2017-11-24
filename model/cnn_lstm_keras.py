@@ -34,8 +34,8 @@ lstm_output_size = 70
 dense_size = 256            # optional, depends on performance
 
 # training
-batch_size = 64
-epochs = 50
+batch_size = 256
+epochs = 20
 
 # gpu
 use_gpu = False
@@ -61,8 +61,8 @@ model.add(Conv1D(filters=filters,
                  strides=1))
 model.add(MaxPooling1D(pool_size=pool_size))
 model.add(LSTM(lstm_output_size))
-model.add(Dense(2))
-model.add(Activation('softmax'))
+model.add(Dense(1))
+model.add(Activation('sigmod'))
 
 if use_gpu:
     multi_model = multi_gpu_model(model, gpus=2)

@@ -12,7 +12,7 @@ import os
 from keras.preprocessing.text import Tokenizer, text_to_word_sequence
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils.np_utils import to_categorical
-
+from keras.models import save_model,load_model
 from keras.layers import Embedding
 from keras.layers import Dense, Input, Flatten
 from keras.layers import Conv1D, MaxPooling1D, Embedding, Merge, Dropout, LSTM, GRU, Bidirectional, TimeDistributed
@@ -22,68 +22,30 @@ from keras import backend as K
 from keras.engine.topology import Layer, InputSpec
 from keras import initializers
 
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
+
+from pre_process import load_data_HATT
+
+origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
+
 MAX_SENT_LENGTH = 100
 MAX_SENTS = 50
 MAX_NB_WORDS = 20000
 EMBEDDING_DIM = 100
 VALIDATION_SPLIT = 0.2
 
+LSTM_HIDDEN_SIZE = 100
 
-data_train = pd.read_csv('~/Testground/data/imdb/labeledTrainData.tsv', sep='\t')
-print data_train.shape
+EPOCH = 10
+BATCH_SIZE = 50
 
-from nltk import tokenize
-
-reviews = []
-labels = []
-texts = []
-
-for idx in range(data_train.review.shape[0]):
-    text = BeautifulSoup(data_train.review[idx])
-    text = clean_str(text.get_text().encode('ascii', 'ignore'))
-    texts.append(text)
-    sentences = tokenize.sent_tokenize(text)
-    reviews.append(sentences)
-
-    labels.append(data_train.sentiment[idx])
-
-tokenizer = Tokenizer(nb_words=MAX_NB_WORDS)
-tokenizer.fit_on_texts(texts)
-
-data = np.zeros((len(texts), MAX_SENTS, MAX_SENT_LENGTH), dtype='int32')
-
-for i, sentences in enumerate(reviews):
-    for j, sent in enumerate(sentences):
-        if j < MAX_SENTS:
-            wordTokens = text_to_word_sequence(sent)
-            k = 0
-            for _, word in enumerate(wordTokens):
-                if k < MAX_SENT_LENGTH and tokenizer.word_index[word] < MAX_NB_WORDS:
-                    data[i, j, k] = tokenizer.word_index[word]
-                    k = k + 1
-
-word_index = tokenizer.word_index
-print('Total %s unique tokens.' % len(word_index))
-
-labels = to_categorical(np.asarray(labels))
-print('Shape of data tensor:', data.shape)
-print('Shape of label tensor:', labels.shape)
-
-indices = np.arange(data.shape[0])
-np.random.shuffle(indices)
-data = data[indices]
-labels = labels[indices]
-nb_validation_samples = int(VALIDATION_SPLIT * data.shape[0])
-
-x_train = data[:-nb_validation_samples]
-y_train = labels[:-nb_validation_samples]
-x_val = data[-nb_validation_samples:]
-y_val = labels[-nb_validation_samples:]
-
-print('Number of positive and negative reviews in traing and validation set')
-print y_train.sum(axis=0)
-print y_val.sum(axis=0)
-
+x_train, y_train, x_val, y_val, data, data_val = load_data_HATT.load_data(
+    word_num_max=MAX_NB_WORDS,
+    sequence_max=MAX_SENTS,
+    word_sequence=MAX_SENT_LENGTH,
+    valid_percent=VALIDATION_SPLIT
+)
+'''
 GLOVE_DIR = "/ext/home/analyst/Testground/data/glove"
 embeddings_index = {}
 f = open(os.path.join(GLOVE_DIR, 'glove.6B.100d.txt'))
@@ -102,21 +64,21 @@ for word, i in word_index.items():
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
         embedding_matrix[i] = embedding_vector
-
-embedding_layer = Embedding(len(word_index) + 1,
+'''
+embedding_layer = Embedding(MAX_NB_WORDS,
                             EMBEDDING_DIM,
-                            weights=[embedding_matrix],
+                            # weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
                             trainable=True)
 
 sentence_input = Input(shape=(MAX_SENT_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sentence_input)
-l_lstm = Bidirectional(LSTM(100))(embedded_sequences)
+l_lstm = Bidirectional(LSTM(LSTM_HIDDEN_SIZE))(embedded_sequences)
 sentEncoder = Model(sentence_input, l_lstm)
 
 review_input = Input(shape=(MAX_SENTS, MAX_SENT_LENGTH), dtype='int32')
 review_encoder = TimeDistributed(sentEncoder)(review_input)
-l_lstm_sent = Bidirectional(LSTM(100))(review_encoder)
+l_lstm_sent = Bidirectional(LSTM(LSTM_HIDDEN_SIZE))(review_encoder)
 preds = Dense(2, activation='softmax')(l_lstm_sent)
 model = Model(review_input, preds)
 
@@ -127,8 +89,10 @@ model.compile(loss='categorical_crossentropy',
 print("model fitting - Hierachical LSTM")
 print model.summary()
 model.fit(x_train, y_train, validation_data=(x_val, y_val),
-          nb_epoch=10, batch_size=50)
+          epochs=EPOCH, batch_size=BATCH_SIZE)
 
+
+'''
 # building Hierachical Attention network
 embedding_matrix = np.random.random((len(word_index) + 1, EMBEDDING_DIM))
 for word, i in word_index.items():
@@ -193,3 +157,17 @@ model.compile(loss='categorical_crossentropy',
 print("model fitting - Hierachical attention network")
 model.fit(x_train, y_train, validation_data=(x_val, y_val),
           nb_epoch=10, batch_size=50)
+
+'''
+print 'saving model...'
+# model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
+save_model(model, os.path.join(os.path.split(origin_path)[0], 'fusai_data/HATT.final'))
+
+re = model.predict(data, BATCH_SIZE).ravel().tolist()
+id_index = np.array(data_val).flatten()
+with open(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'result.csv'), 'w') as f:
+    for i, pre in enumerate(re):
+        if pre>0.5:
+            f.write(id_index[i] + ',' + 'POSITIVE' + '\n')
+        else:
+            f.write(id_index[i] + ',' + 'NEGATIVE' + '\n')
