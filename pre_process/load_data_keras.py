@@ -88,10 +88,10 @@ def load_data(word_num_max=12725, sequence_max=2048, train_perc=0.7):
     # print y
     print 'Done'
     # shuffle the train set
-    CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_xtrain.pkl', x_train, 'w')
-    CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_ytrain.pkl', y_train, 'w')
-    CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_x.pkl', x, 'w')
-    CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_y.pkl', y, 'w')
+    # CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_xtrain.pkl', x_train, 'w')
+    # CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_ytrain.pkl', y_train, 'w')
+    # CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_x.pkl', x, 'w')
+    # CsvUtility.write2pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_y.pkl', y, 'w')
     return x_train, y_train, x, y
 
 def reload_data():
