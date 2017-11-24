@@ -17,7 +17,8 @@ def serperate_text(text_contend='', text2sentence=False):
         line = []
         for count, word in enumerate(text_list):
             if word in stop_sentence:
-                result.append(line)
+                if len(line) > 0:
+                    result.append(line)
                 line = []
             else:
                 line.append(word)
