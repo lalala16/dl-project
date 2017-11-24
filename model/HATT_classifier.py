@@ -35,7 +35,7 @@ VALIDATION_SPLIT = 0.2
 LSTM_HIDDEN_SIZE = 100
 
 EPOCH = 20
-BATCH_SIZE = 128
+BATCH_SIZE = 50
 
 x_train, y_train, x_val, y_val, data, data_val = load_data_HATT.load_data(
     word_num_max=MAX_NB_WORDS,
