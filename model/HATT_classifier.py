@@ -64,7 +64,7 @@ for word, i in word_index.items():
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
         embedding_matrix[i] = embedding_vector
-'''
+
 embedding_layer = Embedding(MAX_NB_WORDS,
                             EMBEDDING_DIM,
                             # weights=[embedding_matrix],
@@ -90,7 +90,7 @@ print("model fitting - Hierachical LSTM")
 print model.summary()
 model.fit(x_train, y_train, validation_data=(x_val, y_val),
           epochs=EPOCH, batch_size=BATCH_SIZE)
-
+'''
 
 '''
 # building Hierachical Attention network
@@ -158,16 +158,31 @@ print("model fitting - Hierachical attention network")
 model.fit(x_train, y_train, validation_data=(x_val, y_val),
           nb_epoch=10, batch_size=50)
 
-'''
+
 print 'saving model...'
 # model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
 save_model(model, os.path.join(os.path.split(origin_path)[0], 'fusai_data/HATT.final'))
+'''
+model = load_model(os.path.join(os.path.split(origin_path)[0], 'fusai_data/HATT.final'))
 
-re = model.predict(data, BATCH_SIZE).ravel().tolist()
+re = model.predict(data, BATCH_SIZE)
 id_index = np.array(data_val).flatten()
+print len(re)
+print len(id_index)
+print re[:30]
+print '---------------------------------------'
+print x_train[:5]
+print '---------------------------------------'
+print y_train[:5]
+print '---------------------------------------'
+print x_val[:5]
+print '---------------------------------------'
+print y_val[:5]
+print '---------------------------------------'
+print data[:5]
 with open(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'result.csv'), 'w') as f:
     for i, pre in enumerate(re):
-        if pre>0.5:
+        if pre[1] > 0.5:
             f.write(id_index[i] + ',' + 'POSITIVE' + '\n')
         else:
             f.write(id_index[i] + ',' + 'NEGATIVE' + '\n')

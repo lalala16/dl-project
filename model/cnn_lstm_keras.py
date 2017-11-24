@@ -62,7 +62,7 @@ model.add(Conv1D(filters=filters,
 model.add(MaxPooling1D(pool_size=pool_size))
 model.add(LSTM(lstm_output_size))
 model.add(Dense(1))
-model.add(Activation('sigmod'))
+model.add(Activation('sigmoid'))
 
 if use_gpu:
     multi_model = multi_gpu_model(model, gpus=2)
