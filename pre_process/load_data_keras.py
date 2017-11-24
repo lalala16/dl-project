@@ -96,9 +96,9 @@ def load_data(word_num_max=12725, sequence_max=2048, train_perc=0.7):
 
 def reload_data():
     x_train = CsvUtility.read_pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_xtrain.pkl', 'r')
-    y_train = CsvUtility.read_pickle()
-    x = CsvUtility.read_pickle()
-    y = CsvUtility.read_pickle()
+    y_train = CsvUtility.read_pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_ytrain.pkl', 'r')
+    x = CsvUtility.read_pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_x.pkl', 'r')
+    y = CsvUtility.read_pickle(os.path.split(origin_path)[0] + '/fusai_data/pre_y.pkl', 'r')
     return x_train, y_train, x, y
 if __name__ == '__main__':
     print 'loading data...'

@@ -43,7 +43,8 @@ use_gpu = False
 
 # loading training data
 print 'loading data...'
-x_train, y_train, x_test, x_test_id = load_data_keras.load_data(word_num_max=max_features, sequence_max=maxlen)
+# x_train, y_train, x_test, x_test_id = load_data_keras.load_data(word_num_max=max_features, sequence_max=maxlen)
+x_train, y_train, x_test, x_test_id = load_data_keras.reload_data()
 # print x_train[5]
 # print y_train[5]
 # print x_test[3]
