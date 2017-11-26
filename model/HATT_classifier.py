@@ -26,16 +26,16 @@ from pre_process import load_data_HATT
 
 origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 
-MAX_SENT_LENGTH = 100
+MAX_SENT_LENGTH = 64
 MAX_SENTS = 100
 MAX_NB_WORDS = 20000
-EMBEDDING_DIM = 100
+EMBEDDING_DIM = 64
 VALIDATION_SPLIT = 0.2
 
-LSTM_HIDDEN_SIZE = 100
+LSTM_HIDDEN_SIZE = 50
 
 EPOCH = 20
-BATCH_SIZE = 50
+BATCH_SIZE = 64
 
 x_train, y_train, x_val, y_val, data, data_val = load_data_HATT.load_data(
     word_num_max=MAX_NB_WORDS,
