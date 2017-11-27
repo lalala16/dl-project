@@ -38,12 +38,7 @@ LSTM_HIDDEN_SIZE = 50
 EPOCH = 10
 BATCH_SIZE = 64
 
-x_train, y_train, x_val, y_val, data, data_val = load_data_HATT.load_data(
-    word_num_max=MAX_NB_WORDS,
-    sequence_max=MAX_SENTS,
-    word_sequence=MAX_SENT_LENGTH,
-    valid_percent=VALIDATION_SPLIT
-)
+
 '''
 GLOVE_DIR = "/ext/home/analyst/Testground/data/glove"
 embeddings_index = {}
@@ -69,12 +64,19 @@ for word, i in word_index.items():
         embedding_matrix[i] = embedding_vector
         count += 1
 print 'find embedding word:', count
+
+
 embedding_layer = Embedding(MAX_NB_WORDS,
                             EMBEDDING_DIM,
                             weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
                             trainable=True)
-
+x_train, y_train, x_val, y_val, data, data_val = load_data_HATT.load_data(
+    word_num_max=MAX_NB_WORDS,
+    sequence_max=MAX_SENTS,
+    word_sequence=MAX_SENT_LENGTH,
+    valid_percent=VALIDATION_SPLIT
+)
 sentence_input = Input(shape=(MAX_SENT_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sentence_input)
 l_lstm = Bidirectional(LSTM(LSTM_HIDDEN_SIZE))(embedded_sequences)
