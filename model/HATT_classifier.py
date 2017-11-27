@@ -52,18 +52,19 @@ f.close()
 
 print('Total %s word vectors.' % len(embeddings_index))
 '''
-word_index, index_word = pickle.load(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl'))
+with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl')) as f:
+    word_index, index_word = pickle.load(f)
 
-embedding_model = Word2Vec.load(os.path.join(os.path.split(origin_path)[0], 'fusai_data/my.model'))
-embedding_matrix = np.random.random((MAX_NB_WORDS + 1, EMBEDDING_DIM))
-count = 0
-for word, i in word_index.items():
-    embedding_vector = embedding_model[word]
-    if embedding_vector is not None:
-        # words not found in embedding index will be all-zeros.
-        embedding_matrix[i] = embedding_vector
-        count += 1
-print 'find embedding word:', count
+    embedding_model = Word2Vec.load(os.path.join(os.path.split(origin_path)[0], 'fusai_data/my.model'))
+    embedding_matrix = np.random.random((MAX_NB_WORDS + 1, EMBEDDING_DIM))
+    count = 0
+    for word, i in word_index.items():
+        embedding_vector = embedding_model[word]
+        if embedding_vector is not None:
+            # words not found in embedding index will be all-zeros.
+            embedding_matrix[i] = embedding_vector
+            count += 1
+    print 'find embedding word:', count
 
 
 embedding_layer = Embedding(MAX_NB_WORDS,
