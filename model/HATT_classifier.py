@@ -69,7 +69,7 @@ with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl
     print 'find embedding word:', count
 
 
-embedding_layer = Embedding(MAX_NB_WORDS,
+embedding_layer = Embedding(MAX_NB_WORDS+1,
                             EMBEDDING_DIM,
                             weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
