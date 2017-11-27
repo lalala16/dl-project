@@ -68,18 +68,19 @@ with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl
             count += 1
     print 'find embedding word:', count
 
-
-embedding_layer = Embedding(MAX_NB_WORDS+1,
-                            EMBEDDING_DIM,
-                            weights=[embedding_matrix],
-                            input_length=MAX_SENT_LENGTH,
-                            trainable=True)
 x_train, y_train, x_val, y_val, data, data_val = load_data_HATT.load_data(
     word_num_max=MAX_NB_WORDS,
     sequence_max=MAX_SENTS,
     word_sequence=MAX_SENT_LENGTH,
     valid_percent=VALIDATION_SPLIT
 )
+
+embedding_layer = Embedding(MAX_NB_WORDS+1,
+                            EMBEDDING_DIM,
+                            weights=[embedding_matrix],
+                            input_length=MAX_SENT_LENGTH,
+                            trainable=True)
+'''
 sentence_input = Input(shape=(MAX_SENT_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sentence_input)
 l_lstm = Bidirectional(LSTM(LSTM_HIDDEN_SIZE))(embedded_sequences)
@@ -99,10 +100,11 @@ print("model fitting - Hierachical LSTM")
 print model.summary()
 model.fit(x_train, y_train, validation_data=(x_val, y_val),
           epochs=EPOCH, batch_size=BATCH_SIZE)
-
-
 '''
+
+
 # building Hierachical Attention network
+'''
 embedding_matrix = np.random.random((len(word_index) + 1, EMBEDDING_DIM))
 for word, i in word_index.items():
     embedding_vector = embeddings_index.get(word)
@@ -115,7 +117,7 @@ embedding_layer = Embedding(len(word_index) + 1,
                             weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
                             trainable=True)
-
+'''
 
 class AttLayer(Layer):
     def __init__(self, **kwargs):
@@ -146,14 +148,14 @@ class AttLayer(Layer):
 
 sentence_input = Input(shape=(MAX_SENT_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sentence_input)
-l_lstm = Bidirectional(GRU(100, return_sequences=True))(embedded_sequences)
+l_lstm = Bidirectional(GRU(LSTM_HIDDEN_SIZE, return_sequences=True))(embedded_sequences)
 l_dense = TimeDistributed(Dense(200))(l_lstm)
 l_att = AttLayer()(l_dense)
 sentEncoder = Model(sentence_input, l_att)
 
 review_input = Input(shape=(MAX_SENTS, MAX_SENT_LENGTH), dtype='int32')
 review_encoder = TimeDistributed(sentEncoder)(review_input)
-l_lstm_sent = Bidirectional(GRU(100, return_sequences=True))(review_encoder)
+l_lstm_sent = Bidirectional(GRU(LSTM_HIDDEN_SIZE, return_sequences=True))(review_encoder)
 l_dense_sent = TimeDistributed(Dense(200))(l_lstm_sent)
 l_att_sent = AttLayer()(l_dense_sent)
 preds = Dense(2, activation='softmax')(l_att_sent)
@@ -166,7 +168,7 @@ model.compile(loss='categorical_crossentropy',
 print("model fitting - Hierachical attention network")
 model.fit(x_train, y_train, validation_data=(x_val, y_val),
           nb_epoch=10, batch_size=50)
-'''
+
 
 print 'saving model...'
 # model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
@@ -178,17 +180,6 @@ re = model.predict(data, BATCH_SIZE)
 id_index = np.array(data_val).flatten()
 print len(re)
 print len(id_index)
-# print re[:30]
-# print '---------------------------------------'
-# print x_train[:5]
-# print '---------------------------------------'
-# print y_train[:5]
-# print '---------------------------------------'
-# print x_val[:5]
-# print '---------------------------------------'
-# print y_val[:5]
-# print '---------------------------------------'
-# print data[:5]
 with open(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'result.csv'), 'w') as f:
     for i, pre in enumerate(re):
         if pre[1] > 0.5:
