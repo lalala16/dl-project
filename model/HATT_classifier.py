@@ -53,7 +53,8 @@ f.close()
 print('Total %s word vectors.' % len(embeddings_index))
 '''
 with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl')) as f:
-    word_index, index_word = pickle.load(f)
+    word_index = pickle.load(f)
+    index_word = pickle.load(f)
 
     embedding_model = Word2Vec.load(os.path.join(os.path.split(origin_path)[0], 'fusai_data/my.model'))
     embedding_matrix = np.random.random((MAX_NB_WORDS + 1, EMBEDDING_DIM))
