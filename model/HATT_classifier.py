@@ -6,6 +6,7 @@ import re
 
 import sys
 import os
+import pickle
 
 from keras.preprocessing.text import Tokenizer, text_to_word_sequence
 from keras.preprocessing.sequence import pad_sequences
@@ -15,10 +16,10 @@ from keras.layers import Embedding
 from keras.layers import Dense, Input, Flatten
 from keras.layers import Conv1D, MaxPooling1D, Embedding, Merge, Dropout, LSTM, GRU, Bidirectional, TimeDistributed
 from keras.models import Model
-
 from keras import backend as K
 from keras.engine.topology import Layer, InputSpec
 from keras import initializers
+from gensim.models import Word2Vec
 
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
@@ -29,12 +30,12 @@ origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 MAX_SENT_LENGTH = 64
 MAX_SENTS = 100
 MAX_NB_WORDS = 20000
-EMBEDDING_DIM = 64
+EMBEDDING_DIM = 200
 VALIDATION_SPLIT = 0.2
 
 LSTM_HIDDEN_SIZE = 50
 
-EPOCH = 20
+EPOCH = 10
 BATCH_SIZE = 64
 
 x_train, y_train, x_val, y_val, data, data_val = load_data_HATT.load_data(
@@ -55,17 +56,22 @@ for line in f:
 f.close()
 
 print('Total %s word vectors.' % len(embeddings_index))
+'''
+word_index, index_word = pickle.load(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl'))
 
-embedding_matrix = np.random.random((len(word_index) + 1, EMBEDDING_DIM))
+embedding_model = Word2Vec.load(os.path.join(os.path.split(origin_path)[0], 'fusai_data/my.model'))
+embedding_matrix = np.random.random((MAX_NB_WORDS + 1, EMBEDDING_DIM))
+count = 0
 for word, i in word_index.items():
-    embedding_vector = embeddings_index.get(word)
+    embedding_vector = embedding_model[word]
     if embedding_vector is not None:
         # words not found in embedding index will be all-zeros.
         embedding_matrix[i] = embedding_vector
-'''
+        count += 1
+print 'find embedding word:', count
 embedding_layer = Embedding(MAX_NB_WORDS,
                             EMBEDDING_DIM,
-                            # weights=[embedding_matrix],
+                            weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
                             trainable=True)
 

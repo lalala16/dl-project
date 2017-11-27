@@ -31,7 +31,7 @@ def load_data(word_num_max=5000, sequence_max=100, word_sequence=100, valid_perc
                             if len(re.sub("[^0-9]", "", sen_i).strip()) > 0]
                 k = 0
                 for _, word in enumerate(sen_list):
-                    if k < word_sequence and word < word_num_max:
+                    if k < word_sequence and word <= word_num_max:
                         # print i,' ', j, ' ', k
                         data[i, j, k] = word
                         k = k + 1
@@ -70,7 +70,7 @@ def load_data(word_num_max=5000, sequence_max=100, word_sequence=100, valid_perc
                             if len(re.sub("[^0-9]", "", sen_i).strip()) > 0]
                 k = 0
                 for _, word in enumerate(sen_list):
-                    if k < word_sequence and word < word_num_max:
+                    if k < word_sequence and word <= word_num_max:
                         data[i, j, k] = word
                         k = k + 1
     print('Shape of data tensor:', data.shape)
