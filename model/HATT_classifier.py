@@ -60,7 +60,7 @@ with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl
     embedding_matrix = np.random.random((MAX_NB_WORDS + 1, EMBEDDING_DIM))
     count = 0
     for word, i in word_index.items():
-        print word
+        # print word
         if word in embedding_model:
             embedding_vector = embedding_model[word]
             # words not found in embedding index will be all-zeros.
