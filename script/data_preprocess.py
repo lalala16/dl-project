@@ -59,7 +59,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
 
     voc_words = Vocabulary(origin_path + '/fusai_data/')
     voc_words.get_vocabulary(header_text_list, remove_stopwords=[], topnum=-1, save=True, have_sentence=have_sentence)
-
+    '''
     x = []
     for i, line in enumerate(header_text_list):
         x.append(voc_words.get_feature_list(line, have_sentence=have_sentence))
@@ -69,7 +69,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
     else:
         CsvUtility.write_array_csv_test(x, origin_path + '/fusai_data/', 'x_train.csv')
         CsvUtility.write_array_csv_test(y, origin_path + '/fusai_data/', 'y_train.csv')
-    '''
+    
     train_size = int(x.shape[0] * train_perc)
     # shuffle the train set
     idx = np.random.permutation(x.shape[0])
@@ -78,7 +78,7 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
     return x_train[:train_size], y_train[:train_size], x_train[train_size:], y_train[train_size:]
     '''
     # preprocess validation set
-
+    '''
     header_text_list = []
     text_id_list = []
     with open(all_path[1], 'r') as rf:
@@ -104,16 +104,8 @@ def load_corpus(origin_path, all_path=['../data/train.tsv', '../data/evaluation_
         CsvUtility.write_array_csv_test(x, origin_path + '/fusai_data/', 'x_validation.csv')
     CsvUtility.write_array_csv_test(text_id_list, origin_path + '/fusai_data/', 'x_validation_id.csv')
     '''
-    text_id_list = []
-    with open(all_path[1], 'r') as rf:
-        rls = rf.readlines()
-        for count, rline in enumerate(rls):
-            data_line = rline.split('\t')
-            text_id_list.append(data_line[0])
-            if count % 10000 == 0:
-                print 'line ', count
-    CsvUtility.write_array_csv_test(text_id_list, origin_path + '/data/', 'x_validation_id.csv')
-    '''
+
+
 
 if __name__ == '__main__':
     # print sys.path

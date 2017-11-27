@@ -62,6 +62,7 @@ class Vocabulary(object):
         print 'i2w', len(self.index2word)
         if save == True:
             self.save_wordcount()
+            self.save_dict()
 
 
     def save_dict(self):
