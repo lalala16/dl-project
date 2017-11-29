@@ -68,19 +68,19 @@ with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl
             count += 1
     print 'find embedding word:', count
 
-x_train, y_train, x_val, y_val, data, data_val = load_data_HATT.load_data(
+x_train, y_train, data, data_val = load_data_HATT.load_data(
     word_num_max=MAX_NB_WORDS,
     sequence_max=MAX_SENTS,
     word_sequence=MAX_SENT_LENGTH,
     valid_percent=VALIDATION_SPLIT
 )
-
+''''''
 embedding_layer = Embedding(MAX_NB_WORDS+1,
                             EMBEDDING_DIM,
                             weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
                             trainable=False)
-'''
+
 sentence_input = Input(shape=(MAX_SENT_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sentence_input)
 l_lstm = Bidirectional(LSTM(LSTM_HIDDEN_SIZE))(embedded_sequences)
@@ -98,9 +98,9 @@ model.compile(loss='categorical_crossentropy',
 
 print("model fitting - Hierachical LSTM")
 print model.summary()
-model.fit(x_train, y_train, validation_data=(x_val, y_val),
+model.fit(x_train, y_train, validation_split=0.1,
           epochs=EPOCH, batch_size=BATCH_SIZE)
-'''
+
 
 
 # building Hierachical Attention network
@@ -117,7 +117,7 @@ embedding_layer = Embedding(len(word_index) + 1,
                             weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
                             trainable=True)
-'''
+
 
 class AttLayer(Layer):
     def __init__(self, **kwargs):
@@ -166,9 +166,9 @@ model.compile(loss='categorical_crossentropy',
               metrics=['acc'])
 
 print("model fitting - Hierachical attention network")
-model.fit(x_train, y_train, validation_data=(x_val, y_val),
+model.fit(x_train, y_train, validation_split=0.1,
           nb_epoch=EPOCH, batch_size=BATCH_SIZE)
-
+'''
 
 print 'saving model...'
 # model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))

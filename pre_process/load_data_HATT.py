@@ -46,14 +46,11 @@ def load_data(word_num_max=5000, sequence_max=100, word_sequence=100, valid_perc
     labels = labels[indices]
     nb_validation_samples = int(valid_percent * data.shape[0])
 
-    x_train = data[:-nb_validation_samples]
-    y_train = labels[:-nb_validation_samples]
-    x_val = data[-nb_validation_samples:]
-    y_val = labels[-nb_validation_samples:]
+    x_train = data
+    y_train = labels
 
     print('Number of positive and negative reviews in traing and validation set')
     print y_train.sum(axis=0)
-    print y_val.sum(axis=0)
 
     f = open(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'x_validation_sentence.csv'), 'r')
     x = [line for line in f]
@@ -78,7 +75,7 @@ def load_data(word_num_max=5000, sequence_max=100, word_sequence=100, valid_perc
     print 'shape of y: ', data_val.shape
     print 'Done'
 
-    return x_train, y_train, x_val, y_val, data, data_val
+    return x_train, y_train, data, data_val
 if __name__ == '__main__':
     MAX_SENT_LENGTH = 100
     MAX_SENTS = 50
@@ -91,7 +88,7 @@ if __name__ == '__main__':
     EPOCH = 10
     BATCH_SIZE = 50
 
-    x_train, y_train, x_val, y_val, data, data_val = load_data(
+    x_train, y_train, data, data_val = load_data(
         word_num_max=MAX_NB_WORDS,
         sequence_max=MAX_SENTS,
         word_sequence=MAX_SENT_LENGTH,
