@@ -16,7 +16,7 @@ origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 
 def load_data(word_num_max=5000, sequence_max=100, word_sequence=100, valid_percent=0.2):
     # x = CsvUtility.read_array_from_csv(os.path.split(origin_path)[0] + '/fusai_data/', 'x_train.csv').flatten()
-    f = open(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'x_train_sentence.csv'), 'r')
+    f = open(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'x_train.csv'), 'r')
     x = [line for line in f]
     f.close()
     # print x[0]
@@ -35,7 +35,7 @@ def load_data(word_num_max=5000, sequence_max=100, word_sequence=100, valid_perc
                         # print i,' ', j, ' ', k
                         data[i, j, k] = word
                         k = k + 1
-    labels = np.array(pd.read_csv(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'y_train_sentence.csv'), index_col=None, header=None)).flatten()
+    labels = np.array(pd.read_csv(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'y_train.csv'), index_col=None, header=None)).flatten()
     labels = to_categorical(labels)
     print('Shape of data tensor:', data.shape)
     print('Shape of label tensor:', labels.shape)
@@ -55,7 +55,7 @@ def load_data(word_num_max=5000, sequence_max=100, word_sequence=100, valid_perc
     print y_train.sum(axis=0)
     print y_val.sum(axis=0)
 
-    f = open(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'x_validation_sentence.csv'), 'r')
+    f = open(os.path.join(os.path.split(origin_path)[0] + '/fusai_data/', 'x_validation.csv'), 'r')
     x = [line for line in f]
     f.close()
     # print x[0]

@@ -79,7 +79,7 @@ embedding_layer = Embedding(MAX_NB_WORDS+1,
                             EMBEDDING_DIM,
                             weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
-                            trainable=True)
+                            trainable=False)
 '''
 sentence_input = Input(shape=(MAX_SENT_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sentence_input)
@@ -167,7 +167,7 @@ model.compile(loss='categorical_crossentropy',
 
 print("model fitting - Hierachical attention network")
 model.fit(x_train, y_train, validation_data=(x_val, y_val),
-          nb_epoch=10, batch_size=50)
+          nb_epoch=EPOCH, batch_size=BATCH_SIZE)
 
 
 print 'saving model...'
