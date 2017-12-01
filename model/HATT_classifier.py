@@ -27,15 +27,15 @@ from pre_process import load_data_HATT
 
 origin_path = os.path.split(os.path.abspath(os.path.dirname(__file__)))[0]
 
-MAX_SENT_LENGTH = 64
+MAX_SENT_LENGTH = 100
 MAX_SENTS = 100
-MAX_NB_WORDS = 20000
+MAX_NB_WORDS = 100000
 EMBEDDING_DIM = 200
 VALIDATION_SPLIT = 0.2
 
-LSTM_HIDDEN_SIZE = 50
+LSTM_HIDDEN_SIZE = 64
 
-EPOCH = 10
+EPOCH = 5
 BATCH_SIZE = 64
 
 
@@ -74,7 +74,7 @@ x_train, y_train, data, data_val = load_data_HATT.load_data(
     word_sequence=MAX_SENT_LENGTH,
     valid_percent=VALIDATION_SPLIT
 )
-''''''
+
 embedding_layer = Embedding(MAX_NB_WORDS+1,
                             EMBEDDING_DIM,
                             weights=[embedding_matrix],
@@ -148,14 +148,14 @@ class AttLayer(Layer):
 
 sentence_input = Input(shape=(MAX_SENT_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sentence_input)
-l_lstm = Bidirectional(GRU(LSTM_HIDDEN_SIZE, return_sequences=True))(embedded_sequences)
+l_lstm = Bidirectional(GRU(100, return_sequences=True))(embedded_sequences)
 l_dense = TimeDistributed(Dense(200))(l_lstm)
 l_att = AttLayer()(l_dense)
 sentEncoder = Model(sentence_input, l_att)
 
 review_input = Input(shape=(MAX_SENTS, MAX_SENT_LENGTH), dtype='int32')
 review_encoder = TimeDistributed(sentEncoder)(review_input)
-l_lstm_sent = Bidirectional(GRU(LSTM_HIDDEN_SIZE, return_sequences=True))(review_encoder)
+l_lstm_sent = Bidirectional(GRU(100, return_sequences=True))(review_encoder)
 l_dense_sent = TimeDistributed(Dense(200))(l_lstm_sent)
 l_att_sent = AttLayer()(l_dense_sent)
 preds = Dense(2, activation='softmax')(l_att_sent)
