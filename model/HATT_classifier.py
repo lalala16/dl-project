@@ -51,7 +51,7 @@ for line in f:
 f.close()
 
 print('Total %s word vectors.' % len(embeddings_index))
-'''
+
 with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl')) as f:
     word_index = pickle.load(f)
     index_word = pickle.load(f)
@@ -67,14 +67,14 @@ with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl
             embedding_matrix[i] = embedding_vector
             count += 1
     print 'find embedding word:', count
-
+'''
 x_train, y_train, data, data_val = load_data_HATT.load_data(
     word_num_max=MAX_NB_WORDS,
     sequence_max=MAX_SENTS,
     word_sequence=MAX_SENT_LENGTH,
     valid_percent=VALIDATION_SPLIT
 )
-
+'''
 embedding_layer = Embedding(MAX_NB_WORDS+1,
                             EMBEDDING_DIM,
                             weights=[embedding_matrix],
@@ -101,7 +101,7 @@ print model.summary()
 model.fit(x_train, y_train, validation_split=0.1,
           epochs=EPOCH, batch_size=BATCH_SIZE)
 
-
+'''
 
 # building Hierachical Attention network
 '''
@@ -169,12 +169,14 @@ print("model fitting - Hierachical attention network")
 model.fit(x_train, y_train, validation_split=0.1,
           nb_epoch=EPOCH, batch_size=BATCH_SIZE)
 '''
+# refit model
+model = load_model(os.path.join(os.path.split(origin_path)[0], 'fusai_data/HATT.final'))
+model.fit(x_train, y_train, validation_split=0.1,
+          epochs=EPOCH, batch_size=BATCH_SIZE)
 
 print 'saving model...'
 # model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
 save_model(model, os.path.join(os.path.split(origin_path)[0], 'fusai_data/HATT.final'))
-
-# model = load_model(os.path.join(os.path.split(origin_path)[0], 'fusai_data/HATT.final'))
 
 re = model.predict(data, BATCH_SIZE)
 id_index = np.array(data_val).flatten()
