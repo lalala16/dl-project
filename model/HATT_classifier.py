@@ -7,7 +7,8 @@ import re
 import sys
 import os
 import pickle
-
+import os
+os.environ['KERAS_BACKEND']='theano'
 from keras.preprocessing.text import Tokenizer, text_to_word_sequence
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils.np_utils import to_categorical
@@ -18,7 +19,7 @@ from keras.layers import Conv1D, MaxPooling1D, Embedding, Merge, Dropout, LSTM, 
 from keras.models import Model
 from keras import backend as K
 from keras.engine.topology import Layer, InputSpec
-from keras import initializers
+from keras import initializations
 from gensim.models import Word2Vec
 
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
@@ -51,7 +52,7 @@ for line in f:
 f.close()
 
 print('Total %s word vectors.' % len(embeddings_index))
-
+'''
 with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl')) as f:
     word_index = pickle.load(f)
     index_word = pickle.load(f)
@@ -67,20 +68,20 @@ with open(os.path.join(os.path.split(origin_path)[0], 'fusai_data/dictionary.pkl
             embedding_matrix[i] = embedding_vector
             count += 1
     print 'find embedding word:', count
-'''
+
 x_train, y_train, data, data_val = load_data_HATT.load_data(
     word_num_max=MAX_NB_WORDS,
     sequence_max=MAX_SENTS,
     word_sequence=MAX_SENT_LENGTH,
     valid_percent=VALIDATION_SPLIT
 )
-'''
+
 embedding_layer = Embedding(MAX_NB_WORDS+1,
                             EMBEDDING_DIM,
                             weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
                             trainable=False)
-
+'''
 sentence_input = Input(shape=(MAX_SENT_LENGTH,), dtype='int32')
 embedded_sequences = embedding_layer(sentence_input)
 l_lstm = Bidirectional(LSTM(LSTM_HIDDEN_SIZE))(embedded_sequences)
@@ -101,10 +102,10 @@ print model.summary()
 model.fit(x_train, y_train, validation_split=0.1,
           epochs=EPOCH, batch_size=BATCH_SIZE)
 
-'''
+
 
 # building Hierachical Attention network
-'''
+
 embedding_matrix = np.random.random((len(word_index) + 1, EMBEDDING_DIM))
 for word, i in word_index.items():
     embedding_vector = embeddings_index.get(word)
@@ -117,11 +118,11 @@ embedding_layer = Embedding(len(word_index) + 1,
                             weights=[embedding_matrix],
                             input_length=MAX_SENT_LENGTH,
                             trainable=True)
-
+'''
 
 class AttLayer(Layer):
     def __init__(self, **kwargs):
-        self.init = initializers.get('normal')
+        self.init = initializations.get('normal')
         # self.input_spec = [InputSpec(ndim=3)]
         super(AttLayer, self).__init__(**kwargs)
 
@@ -134,6 +135,7 @@ class AttLayer(Layer):
         super(AttLayer, self).build(input_shape)  # be sure you call this somewhere!
 
     def call(self, x, mask=None):
+        print x.shape, self.W.shape
         eij = K.tanh(K.dot(x, self.W))
 
         ai = K.exp(eij)
@@ -168,12 +170,13 @@ model.compile(loss='categorical_crossentropy',
 print("model fitting - Hierachical attention network")
 model.fit(x_train, y_train, validation_split=0.1,
           nb_epoch=EPOCH, batch_size=BATCH_SIZE)
+
 '''
 # refit model
 model = load_model(os.path.join(os.path.split(origin_path)[0], 'fusai_data/HATT.final'))
 model.fit(x_train, y_train, validation_split=0.1,
           epochs=EPOCH, batch_size=BATCH_SIZE)
-
+'''
 print 'saving model...'
 # model.save(os.path.join(os.path.split(origin_path)[0], 'data/lstm_cnn.final'))
 save_model(model, os.path.join(os.path.split(origin_path)[0], 'fusai_data/HATT.final'))
